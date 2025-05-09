@@ -3,6 +3,7 @@ const path = require('path');
 const cors = require('cors');
 const helmet = require('helmet');
 const compression = require('compression');
+const session = require('express-session');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -14,6 +15,12 @@ app.use(compression()); // Compress responses
 app.use(express.json()); // Parse JSON bodies
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 app.use(express.static(path.resolve(__dirname, 'public'))); // Serve static files
+app.use(session({
+  secret: 'sua-chave-secreta', // pode ser qualquer frase secreta
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false }
+}));
 
 // Routes
 app.use('/api/cars', require('./routes/cars'));
