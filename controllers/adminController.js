@@ -2,6 +2,7 @@ const cars = require('./carsController').cars;
 
 // Admin login
 exports.login = (req, res) => {
+console.log('Login recebido:', req.body);
     const { username, password } = req.body;
     
     // Simple authentication (replace with proper auth in production)
