@@ -14,13 +14,14 @@ app.use(cors()); // Enable CORS
 app.use(compression()); // Compress responses
 app.use(express.json()); // Parse JSON bodies
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
-app.use(express.static(path.resolve(__dirname, 'public'))); // Serve static files
 app.use(session({
   secret: 'sua-chave-secreta', // pode ser qualquer frase secreta
   resave: false,
   saveUninitialized: true,
   cookie: { secure: false }
 }));
+app.use(express.static(path.resolve(__dirname, 'public'))); // Serve static files
+
 
 // Routes
 app.use('/api/cars', require('./routes/cars'));
