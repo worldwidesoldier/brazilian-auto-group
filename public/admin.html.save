@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Panel - Brazilian Auto Group</title>
+</head>
+<body>
+  <h1>Painel Admin</h1>
+  <p>Se você está vendo esta página, o backend está servindo o HTML corretamente!</p>
+</body>
+</html>   vim src/public/admin.html
+
