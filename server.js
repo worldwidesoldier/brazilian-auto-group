@@ -41,7 +41,7 @@ app.get('/car/:id', (req, res) => {
 });
 
 app.get('/admin', (req, res) => {
-    res.sendFile(path.resolve(__dirname, 'public', 'admin.html'));
+    res.redirect('/admin-dashboard.html');
 });
 
 app.get('/admin/dashboard', (req, res) => {
