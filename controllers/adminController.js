@@ -1,21 +1,6 @@
 const cars = require('./carsController').cars;
 
-// Admin login
-exports.login = (req, res) => {
-    // SEM VERIFICAÇÃO DE USUÁRIO/SENHA
-    res.json({ success: true });
-};
-
-    // Simple authentication (replace with proper auth in production)
-    if (username === 'admin' && password === 'admin123') {
-        req.session.isAuthenticated = true;
-        res.json({ success: true });
-    } else {
-        res.status(401).json({ success: false, message: 'Invalid credentials' });
-    }
-};
-
-// Create new car
+// Criar novo carro
 exports.createCar = (req, res) => {
     const newCar = {
         id: cars.length + 1,
@@ -25,7 +10,7 @@ exports.createCar = (req, res) => {
     res.status(201).json(newCar);
 };
 
-// Update car
+// Atualizar carro
 exports.updateCar = (req, res) => {
     const carId = parseInt(req.params.id);
     const carIndex = cars.findIndex(c => c.id === carId);
@@ -37,13 +22,13 @@ exports.updateCar = (req, res) => {
     cars[carIndex] = {
         ...cars[carIndex],
         ...req.body,
-        id: carId // Ensure ID doesn't change
+        id: carId // Garante que o ID não muda
     };
 
     res.json(cars[carIndex]);
 };
 
-// Delete car
+// Deletar carro
 exports.deleteCar = (req, res) => {
     const carId = parseInt(req.params.id);
     const carIndex = cars.findIndex(c => c.id === carId);
