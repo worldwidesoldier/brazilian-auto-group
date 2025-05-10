@@ -4,9 +4,14 @@ const cors = require('cors');
 const helmet = require('helmet');
 const compression = require('compression');
 const session = require('express-session');
+const connectDB = require('./config/database');
+require('dotenv').config();
 
 const app = express();
 const port = process.env.PORT || 3000;
+
+// Conectar ao MongoDB
+connectDB();
 
 // Middleware
 app.use(helmet({
@@ -17,10 +22,10 @@ app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(session({
-    secret: 'sua-chave-secreta',
+    secret: process.env.SESSION_SECRET || 'sua-chave-secreta',
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false }
+    cookie: { secure: process.env.NODE_ENV === 'production' }
 }));
 
 // Servir arquivos estáticos
