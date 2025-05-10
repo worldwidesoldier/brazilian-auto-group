@@ -12,8 +12,8 @@ const uploadToS3 = async (file) => {
         Bucket: process.env.AWS_BUCKET_NAME,
         Key: `${Date.now()}-${file.originalname}`,
         Body: file.buffer,
-        ContentType: file.mimetype,
-        ACL: 'public-read'
+        ContentType: file.mimetype
+        // ACL removed for compatibility with S3 buckets that block ACLs
     };
 
     try {
@@ -40,4 +40,4 @@ const deleteFromS3 = async (imageUrl) => {
     }
 };
 
-module.exports = { uploadToS3, deleteFromS3 }; 
+module.exports = { uploadToS3, deleteFromS3 };
