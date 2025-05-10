@@ -1,17 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const adminController = require('../controllers/adminController');
-const authMiddleware = require('../middleware/auth');
 
-// Admin authentication
+// Login (agora não precisa mais de autenticação)
 router.post('/login', adminController.login);
 
-// Protected routes (require authentication)
-router.use(authMiddleware);
-
-// Car management
+// Rotas de inventário (se existirem)
 router.post('/cars', adminController.createCar);
 router.put('/cars/:id', adminController.updateCar);
 router.delete('/cars/:id', adminController.deleteCar);
 
-module.exports = router; 
+module.exports = router;
