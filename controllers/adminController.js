@@ -2,8 +2,9 @@ const cars = require('./carsController').cars;
 
 // Admin login
 exports.login = (req, res) => {
-    console.log('Login recebido:', req.body); // <-- Log para debug
-    const { username, password } = req.body;
+    console.log('Login recebido:', req.body);
+    res.json({ recebido: req.body });
+};
 
     // Simple authentication (replace with proper auth in production)
     if (username === 'admin' && password === 'admin123') {
