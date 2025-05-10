@@ -1,66 +1,268 @@
-<<!DOCTYPE html>
-<html lang="pt-br">
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Administração de Carros - Brazilian Auto Group</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>body { font-family: sans-serif; }</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo - Brazilian Auto Group</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-100 min-h-screen">
-  <div class="max-w-2xl mx-auto py-8">
-    <h1 class="text-2xl font-bold mb-6 text-green-900 text-center">Inventário de Carros</h1>
-    <form id="carForm" class="bg-white p-4 rounded shadow mb-6 flex flex-col gap-2">
-      <input type="text" id="name" placeholder="Nome do carro" class="border rounded px-2 py-1" required>
-      <input type="number" id="year" placeholder="Ano" class="border rounded px-2 py-1" required>
-      <input type="number" id="price" placeholder="Preço" class="border rounded px-2 py-1" required>
-      <input type="text" id="image" placeholder="URL da imagem" class="border rounded px-2 py-1">
-      <button type="submit" class="bg-green-700 text-white py-2 rounded hover:bg-green-800">Adicionar Carro</button>
-    </form>
-    <ul id="carList" class="space-y-4"></ul>
-  </div>
-  <script>
-    async function loadCars() {
-      const res = await fetch('/api/cars');
-      const cars = await res.json();
-      const carList = document.getElementById('carList');
-      carList.innerHTML = '';
-      cars.forEach(car => {
-        const li = document.createElement('li');
-        li.className = 'bg-white p-4 rounded shadow flex justify-between items-center';
-        li.innerHTML = `
-          <div>
-            <strong>${car.name}</strong> (${car.year})<br>
-            <span class="text-green-700 font-bold">R$ ${car.price}</span>
-          </div>
-          <button onclick="deleteCar(${car.id})" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-800">Remover</button>
-        `;
-        carList.appendChild(li);
-      });
-    }
-    async function deleteCar(id) {
-      if (confirm('Tem certeza que deseja remover este carro?')) {
-        await fetch('/api/admin/cars/' + id, { method: 'DELETE' });
+<body class="bg-gray-100">
+    <div class="min-h-screen">
+        <!-- Header -->
+        <header class="bg-white shadow">
+            <div class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+                <h1 class="text-3xl font-bold text-gray-900">Painel Administrativo</h1>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+            <!-- Add Car Form -->
+            <div class="bg-white shadow rounded-lg p-6 mb-6">
+                <h2 class="text-xl font-semibold mb-4">Adicionar Novo Carro</h2>
+                <form id="addCarForm" class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Marca</label>
+                            <input type="text" name="brand" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Modelo</label>
+                            <input type="text" name="model" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Ano</label>
+                            <input type="number" name="year" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Preço</label>
+                            <input type="number" name="price" step="0.01" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Descrição</label>
+                        <textarea name="description" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Foto do Carro</label>
+                        <input type="file" name="image" accept="image/*" required class="mt-1 block w-full">
+                    </div>
+                    <div>
+                        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                            Adicionar Carro
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Cars List -->
+            <div class="bg-white shadow rounded-lg p-6">
+                <h2 class="text-xl font-semibold mb-4">Carros em Estoque</h2>
+                <div id="carsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Cars will be loaded here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Edit Car Modal -->
+    <div id="editModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="mt-3">
+                <h3 class="text-lg font-medium text-gray-900">Editar Carro</h3>
+                <form id="editCarForm" class="mt-4 space-y-4">
+                    <input type="hidden" name="id">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Marca</label>
+                        <input type="text" name="brand" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Modelo</label>
+                        <input type="text" name="model" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Ano</label>
+                        <input type="number" name="year" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Preço</label>
+                        <input type="number" name="price" step="0.01" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Descrição</label>
+                        <textarea name="description" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Nova Foto (opcional)</label>
+                        <input type="file" name="image" accept="image/*" class="mt-1 block w-full">
+                    </div>
+                    <div class="flex justify-end space-x-3">
+                        <button type="button" onclick="closeEditModal()" class="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                            Salvar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Funções auxiliares
+        function formatPrice(price) {
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            }).format(price);
+        }
+
+        function formatDate(date) {
+            return new Date(date).toLocaleDateString('pt-BR');
+        }
+
+        // Carregar carros
+        async function loadCars() {
+            try {
+                const response = await fetch('/api/cars');
+                const cars = await response.json();
+                const carsList = document.getElementById('carsList');
+                carsList.innerHTML = '';
+
+                cars.forEach(car => {
+                    const card = document.createElement('div');
+                    card.className = 'bg-white rounded-lg shadow overflow-hidden';
+                    card.innerHTML = `
+                        <img src="${car.image || 'placeholder.jpg'}" alt="${car.brand} ${car.model}" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold">${car.brand} ${car.model}</h3>
+                            <p class="text-gray-600">Ano: ${car.year}</p>
+                            <p class="text-gray-600">Preço: ${formatPrice(car.price)}</p>
+                            <p class="text-gray-600">Status: ${car.status === 'available' ? 'Disponível' : 'Vendido'}</p>
+                            <div class="mt-4 flex space-x-2">
+                                <button onclick="openEditModal(${car.id})" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">
+                                    <i class="fas fa-edit"></i> Editar
+                                </button>
+                                <button onclick="deleteCar(${car.id})" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700">
+                                    <i class="fas fa-trash"></i> Remover
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    carsList.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Erro ao carregar carros:', error);
+                alert('Erro ao carregar carros. Por favor, tente novamente.');
+            }
+        }
+
+        // Adicionar carro
+        document.getElementById('addCarForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+
+            try {
+                const response = await fetch('/api/cars', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    e.target.reset();
+                    loadCars();
+                    alert('Carro adicionado com sucesso!');
+                } else {
+                    throw new Error('Erro ao adicionar carro');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao adicionar carro. Por favor, tente novamente.');
+            }
+        });
+
+        // Editar carro
+        let currentCarId = null;
+
+        function openEditModal(carId) {
+            currentCarId = carId;
+            const modal = document.getElementById('editModal');
+            modal.classList.remove('hidden');
+
+            // Carregar dados do carro
+            fetch(`/api/cars/${carId}`)
+                .then(response => response.json())
+                .then(car => {
+                    const form = document.getElementById('editCarForm');
+                    form.id.value = car.id;
+                    form.brand.value = car.brand;
+                    form.model.value = car.model;
+                    form.year.value = car.year;
+                    form.price.value = car.price;
+                    form.description.value = car.description;
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar carro:', error);
+                    alert('Erro ao carregar dados do carro. Por favor, tente novamente.');
+                });
+        }
+
+        function closeEditModal() {
+            const modal = document.getElementById('editModal');
+            modal.classList.add('hidden');
+            currentCarId = null;
+        }
+
+        document.getElementById('editCarForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+
+            try {
+                const response = await fetch(`/api/cars/${currentCarId}`, {
+                    method: 'PUT',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    closeEditModal();
+                    loadCars();
+                    alert('Carro atualizado com sucesso!');
+                } else {
+                    throw new Error('Erro ao atualizar carro');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao atualizar carro. Por favor, tente novamente.');
+            }
+        });
+
+        // Remover carro
+        async function deleteCar(carId) {
+            if (!confirm('Tem certeza que deseja remover este carro?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/cars/${carId}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    loadCars();
+                    alert('Carro removido com sucesso!');
+                } else {
+                    throw new Error('Erro ao remover carro');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao remover carro. Por favor, tente novamente.');
+            }
+        }
+
+        // Carregar carros ao iniciar
         loadCars();
-      }
-    }
-    document.getElementById('carForm').onsubmit = async function(e) {
-      e.preventDefault();
-      const car = {
-        name: document.getElementById('name').value,
-        year: parseInt(document.getElementById('year').value),
-        price: parseFloat(document.getElementById('price').value),
-        image: document.getElementById('image').value
-      };
-      await fetch('/api/admin/cars', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(car)
-      });
-      e.target.reset();
-      loadCars();
-    }
-    loadCars();
-  </script>
+    </script>
 </body>
 </html>

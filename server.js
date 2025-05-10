@@ -9,25 +9,28 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // Middleware
-app.use(helmet()); // Security headers
-app.use(cors()); // Enable CORS
-app.use(compression()); // Compress responses
-app.use(express.json()); // Parse JSON bodies
-app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
-app.use(session({
-  secret: 'sua-chave-secreta', // pode ser qualquer frase secreta
-  resave: false,
-  saveUninitialized: true,
-  cookie: { secure: false }
+app.use(helmet({
+    contentSecurityPolicy: false // Necessário para permitir upload de arquivos
 }));
-app.use(express.static(path.resolve(__dirname, 'public'))); // Serve static files
+app.use(cors());
+app.use(compression());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(session({
+    secret: 'sua-chave-secreta',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false }
+}));
 
+// Servir arquivos estáticos
+app.use(express.static(path.resolve(__dirname, 'public')));
 
-// Routes
+// Rotas da API
 app.use('/api/cars', require('./routes/cars'));
 app.use('/api/admin', require('./routes/admin'));
 
-// Serve frontend pages
+// Rotas do frontend
 app.get('/', (req, res) => {
     res.sendFile(path.resolve(__dirname, 'public', 'index.html'));
 });
@@ -48,13 +51,13 @@ app.get('/admin/dashboard', (req, res) => {
     res.sendFile(path.resolve(__dirname, 'public', 'admin-dashboard.html'));
 });
 
-// Error handling middleware
+// Tratamento de erros
 app.use((err, req, res, next) => {
     console.error(err.stack);
-    res.status(500).json({ message: 'Something went wrong!' });
+    res.status(500).json({ message: 'Algo deu errado!' });
 });
 
-// Start server
+// Iniciar servidor
 app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
+    console.log(`Servidor rodando em http://localhost:${port}`);
 });
