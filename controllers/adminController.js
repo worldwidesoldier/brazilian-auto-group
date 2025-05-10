@@ -2,8 +2,8 @@ const cars = require('./carsController').cars;
 
 // Admin login
 exports.login = (req, res) => {
-    console.log('Login recebido:', req.body);
-    res.json({ recebido: req.body });
+    // SEM VERIFICAÇÃO DE USUÁRIO/SENHA
+    res.json({ success: true });
 };
 
     // Simple authentication (replace with proper auth in production)
