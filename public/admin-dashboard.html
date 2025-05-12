@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Administrativo - Brazilian Auto Group</title>
+    <title>Admin Dashboard - Brazilian Auto Group</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
@@ -12,7 +12,7 @@
         <!-- Header -->
         <header class="bg-white shadow">
             <div class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
-                <h1 class="text-3xl font-bold text-gray-900">Painel Administrativo</h1>
+                <h1 class="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
             </div>
         </header>
 
@@ -20,37 +20,38 @@
         <main class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
             <!-- Add Car Form -->
             <div class="bg-white shadow rounded-lg p-6 mb-6">
-                <h2 class="text-xl font-semibold mb-4">Adicionar Novo Carro</h2>
+                <h2 class="text-xl font-semibold mb-4">Add New Car</h2>
                 <form id="addCarForm" class="space-y-4">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Marca</label>
+                            <label class="block text-sm font-medium text-gray-700">Brand</label>
                             <input type="text" name="brand" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Modelo</label>
+                            <label class="block text-sm font-medium text-gray-700">Model</label>
                             <input type="text" name="model" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Ano</label>
+                            <label class="block text-sm font-medium text-gray-700">Year</label>
                             <input type="number" name="year" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Preço</label>
+                            <label class="block text-sm font-medium text-gray-700">Price (USD)</label>
                             <input type="number" name="price" step="0.01" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                         </div>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Descrição</label>
+                        <label class="block text-sm font-medium text-gray-700">Description</label>
                         <textarea name="description" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"></textarea>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Foto do Carro</label>
-                        <input type="file" name="image" accept="image/*" required class="mt-1 block w-full">
+                        <label class="block text-sm font-medium text-gray-700">Car Photos</label>
+                        <input type="file" name="images" accept="image/*" multiple required class="mt-1 block w-full">
+                        <small class="text-gray-500">You can upload up to 5 photos per car.</small>
                     </div>
                     <div>
                         <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                            Adicionar Carro
+                            Add Car
                         </button>
                     </div>
                 </form>
@@ -58,7 +59,7 @@
 
             <!-- Cars List -->
             <div class="bg-white shadow rounded-lg p-6">
-                <h2 class="text-xl font-semibold mb-4">Carros em Estoque</h2>
+                <h2 class="text-xl font-semibold mb-4">Cars in Stock</h2>
                 <div id="carsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <!-- Cars will be loaded here -->
                 </div>
@@ -70,39 +71,39 @@
     <div id="editModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
         <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
             <div class="mt-3">
-                <h3 class="text-lg font-medium text-gray-900">Editar Carro</h3>
+                <h3 class="text-lg font-medium text-gray-900">Edit Car</h3>
                 <form id="editCarForm" class="mt-4 space-y-4">
                     <input type="hidden" name="id">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Marca</label>
+                        <label class="block text-sm font-medium text-gray-700">Brand</label>
                         <input type="text" name="brand" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Modelo</label>
+                        <label class="block text-sm font-medium text-gray-700">Model</label>
                         <input type="text" name="model" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Ano</label>
+                        <label class="block text-sm font-medium text-gray-700">Year</label>
                         <input type="number" name="year" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Preço</label>
+                        <label class="block text-sm font-medium text-gray-700">Price (USD)</label>
                         <input type="number" name="price" step="0.01" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Descrição</label>
+                        <label class="block text-sm font-medium text-gray-700">Description</label>
                         <textarea name="description" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"></textarea>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Nova Foto (opcional)</label>
-                        <input type="file" name="image" accept="image/*" class="mt-1 block w-full">
+                        <label class="block text-sm font-medium text-gray-700">New Photos (optional, up to 5)</label>
+                        <input type="file" name="images" accept="image/*" multiple class="mt-1 block w-full">
                     </div>
                     <div class="flex justify-end space-x-3">
                         <button type="button" onclick="closeEditModal()" class="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
-                            Cancelar
+                            Cancel
                         </button>
                         <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                            Salvar
+                            Save
                         </button>
                     </div>
                 </form>
@@ -111,19 +112,15 @@
     </div>
 
     <script>
-        // Funções auxiliares
+        // Format price in USD
         function formatPrice(price) {
-            return new Intl.NumberFormat('pt-BR', {
+            return new Intl.NumberFormat('en-US', {
                 style: 'currency',
-                currency: 'BRL'
+                currency: 'USD'
             }).format(price);
         }
 
-        function formatDate(date) {
-            return new Date(date).toLocaleDateString('pt-BR');
-        }
-
-        // Carregar carros
+        // Load cars
         async function loadCars() {
             try {
                 const response = await fetch('/api/cars');
@@ -133,20 +130,24 @@
 
                 cars.forEach(car => {
                     const card = document.createElement('div');
-                    card.className = 'bg-white rounded-lg shadow overflow-hidden';
+                    card.className = 'bg-white rounded-lg shadow overflow-hidden p-2 flex flex-col';
+                    let imagesHtml = '';
+                    (car.images || []).forEach(imgUrl => {
+                        imagesHtml += `<img src="${imgUrl}" class="w-full h-32 object-cover mb-2" alt="Car photo">`;
+                    });
                     card.innerHTML = `
-                        <img src="${car.image || 'placeholder.jpg'}" alt="${car.brand} ${car.model}" class="w-full h-48 object-cover">
-                        <div class="p-4">
+                        ${imagesHtml}
+                        <div class="p-2">
                             <h3 class="text-lg font-semibold">${car.brand} ${car.model}</h3>
-                            <p class="text-gray-600">Ano: ${car.year}</p>
-                            <p class="text-gray-600">Preço: ${formatPrice(car.price)}</p>
-                            <p class="text-gray-600">Status: ${car.status === 'available' ? 'Disponível' : 'Vendido'}</p>
+                            <p class="text-gray-600">Year: ${car.year}</p>
+                            <p class="text-gray-600">Price: ${formatPrice(car.price)}</p>
+                            <p class="text-gray-600">Status: ${car.status === 'available' ? 'Available' : 'Sold'}</p>
                             <div class="mt-4 flex space-x-2">
-                                <button onclick="openEditModal(${car.id})" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">
-                                    <i class="fas fa-edit"></i> Editar
+                                <button onclick="openEditModal('${car._id}')" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">
+                                    <i class="fas fa-edit"></i> Edit
                                 </button>
-                                <button onclick="deleteCar(${car.id})" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700">
-                                    <i class="fas fa-trash"></i> Remover
+                                <button onclick="deleteCar('${car._id}')" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700">
+                                    <i class="fas fa-trash"></i> Remove
                                 </button>
                             </div>
                         </div>
@@ -154,12 +155,12 @@
                     carsList.appendChild(card);
                 });
             } catch (error) {
-                console.error('Erro ao carregar carros:', error);
-                alert('Erro ao carregar carros. Por favor, tente novamente.');
+                console.error('Error loading cars:', error);
+                alert('Error loading cars. Please try again.');
             }
         }
 
-        // Adicionar carro
+        // Add car
         document.getElementById('addCarForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const formData = new FormData(e.target);
@@ -173,17 +174,17 @@
                 if (response.ok) {
                     e.target.reset();
                     loadCars();
-                    alert('Carro adicionado com sucesso!');
+                    alert('Car added successfully!');
                 } else {
-                    throw new Error('Erro ao adicionar carro');
+                    throw new Error('Error adding car');
                 }
             } catch (error) {
-                console.error('Erro:', error);
-                alert('Erro ao adicionar carro. Por favor, tente novamente.');
+                console.error('Error:', error);
+                alert('Error adding car. Please try again.');
             }
         });
 
-        // Editar carro
+        // Edit car
         let currentCarId = null;
 
         function openEditModal(carId) {
@@ -191,12 +192,12 @@
             const modal = document.getElementById('editModal');
             modal.classList.remove('hidden');
 
-            // Carregar dados do carro
+            // Load car data
             fetch(`/api/cars/${carId}`)
                 .then(response => response.json())
                 .then(car => {
                     const form = document.getElementById('editCarForm');
-                    form.id.value = car.id;
+                    form.id.value = car._id;
                     form.brand.value = car.brand;
                     form.model.value = car.model;
                     form.year.value = car.year;
@@ -204,8 +205,8 @@
                     form.description.value = car.description;
                 })
                 .catch(error => {
-                    console.error('Erro ao carregar carro:', error);
-                    alert('Erro ao carregar dados do carro. Por favor, tente novamente.');
+                    console.error('Error loading car:', error);
+                    alert('Error loading car data. Please try again.');
                 });
         }
 
@@ -228,19 +229,19 @@
                 if (response.ok) {
                     closeEditModal();
                     loadCars();
-                    alert('Carro atualizado com sucesso!');
+                    alert('Car updated successfully!');
                 } else {
-                    throw new Error('Erro ao atualizar carro');
+                    throw new Error('Error updating car');
                 }
             } catch (error) {
-                console.error('Erro:', error);
-                alert('Erro ao atualizar carro. Por favor, tente novamente.');
+                console.error('Error:', error);
+                alert('Error updating car. Please try again.');
             }
         });
 
-        // Remover carro
+        // Remove car
         async function deleteCar(carId) {
-            if (!confirm('Tem certeza que deseja remover este carro?')) {
+            if (!confirm('Are you sure you want to remove this car?')) {
                 return;
             }
 
@@ -251,17 +252,17 @@
 
                 if (response.ok) {
                     loadCars();
-                    alert('Carro removido com sucesso!');
+                    alert('Car removed successfully!');
                 } else {
-                    throw new Error('Erro ao remover carro');
+                    throw new Error('Error removing car');
                 }
             } catch (error) {
-                console.error('Erro:', error);
-                alert('Erro ao remover carro. Por favor, tente novamente.');
+                console.error('Error:', error);
+                alert('Error removing car. Please try again.');
             }
         }
 
-        // Carregar carros ao iniciar
+        // Load cars on start
         loadCars();
     </script>
 </body>
