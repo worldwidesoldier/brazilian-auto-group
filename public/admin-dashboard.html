@@ -132,9 +132,13 @@
                     const card = document.createElement('div');
                     card.className = 'bg-white rounded-lg shadow overflow-hidden p-2 flex flex-col';
                     let imagesHtml = '';
-                    (car.images || []).forEach(imgUrl => {
-                        imagesHtml += `<img src="${imgUrl}" class="w-full h-32 object-cover mb-2" alt="Car photo">`;
-                    });
+                    if (car.images && car.images.length > 0) {
+                        car.images.forEach(imgUrl => {
+                            imagesHtml += `<img src="${imgUrl}" class="w-full h-32 object-cover mb-2" alt="Car photo">`;
+                        });
+                    } else if (car.image) {
+                        imagesHtml = `<img src="${car.image}" class="w-full h-32 object-cover mb-2" alt="Car photo">`;
+                    }
                     card.innerHTML = `
                         ${imagesHtml}
                         <div class="p-2">
