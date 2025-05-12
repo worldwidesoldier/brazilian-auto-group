@@ -180,45 +180,42 @@
             }).format(price);
         }
 
-        // Preview images before upload
-        function previewImages(input, previewElement) {
-            const preview = document.getElementById(previewElement);
-            preview.innerHTML = '';
+        // Preview images before upload (multiple images)
+        let addCarImages = [];
+        const imagesInput = document.getElementById('images');
+        const imagePreview = document.getElementById('imagePreview');
 
-            if (input.files) {
-                Array.from(input.files).forEach((file, index) => {
-                    if (index >= 5) return; // Limit to 5 images
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const div = document.createElement('div');
-                        div.className = 'relative';
-                        div.innerHTML = `
-                            <img src="${e.target.result}" class="w-full h-32 object-cover rounded">
-                            <button type="button" class="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600" onclick="removeImage(${index})">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        `;
-                        preview.appendChild(div);
-                    }
-                    reader.readAsDataURL(file);
-                });
-            }
+        imagesInput.addEventListener('change', function() {
+            addCarImages = Array.from(this.files).slice(0, 5); // Limite de 5 imagens
+            renderImagePreview();
+        });
+
+        function renderImagePreview() {
+            imagePreview.innerHTML = '';
+            addCarImages.forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const div = document.createElement('div');
+                    div.className = 'relative';
+                    div.innerHTML = `
+                        <img src="${e.target.result}" class="w-full h-32 object-cover rounded">
+                        <button type="button" class="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600" onclick="removeAddCarImage(${index})">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+                    imagePreview.appendChild(div);
+                }
+                reader.readAsDataURL(file);
+            });
         }
 
-        // Remove image from preview
-        function removeImage(index) {
+        window.removeAddCarImage = function(index) {
+            addCarImages.splice(index, 1);
+            renderImagePreview();
+            // Atualiza o input de arquivos
             const dt = new DataTransfer();
-            const input = document.getElementById('images');
-            const { files } = input;
-
-            for (let i = 0; i < files.length; i++) {
-                if (i !== index) {
-                    dt.items.add(files[i]);
-                }
-            }
-
-            input.files = dt.files;
-            previewImages(input, 'imagePreview');
+            addCarImages.forEach(file => dt.items.add(file));
+            imagesInput.files = dt.files;
         }
 
         // Load cars
@@ -267,6 +264,9 @@
         document.getElementById('addCarForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const formData = new FormData(e.target);
+            // Remove imagens do formData e adiciona as do array
+            formData.delete('images');
+            addCarImages.forEach(file => formData.append('images', file));
 
             try {
                 const response = await fetch('/api/cars', {
@@ -276,7 +276,8 @@
 
                 if (response.ok) {
                     e.target.reset();
-                    document.getElementById('imagePreview').innerHTML = '';
+                    addCarImages = [];
+                    imagePreview.innerHTML = '';
                     loadCars();
                     alert('Car added successfully!');
                 } else {
