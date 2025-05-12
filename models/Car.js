@@ -6,6 +6,16 @@ const carSchema = new mongoose.Schema({
     year: Number,
     price: Number,
     description: String,
+    mileage: {
+        type: Number,
+        required: true,
+        min: 0
+    },
+    fuelType: {
+        type: String,
+        enum: ['gasoline', 'ethanol', 'diesel', 'flex', 'hybrid', 'electric'],
+        required: true
+    },
     images: [String], // array of image URLs
     status: {
         type: String,

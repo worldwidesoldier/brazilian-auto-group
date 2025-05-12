@@ -65,12 +65,20 @@ exports.getCarById = async (req, res) => {
 
 exports.addCar = async (req, res) => {
     try {
-        const { brand, model, year, price, description } = req.body;
+        const { brand, model, year, price, description, mileage, fuelType } = req.body;
 
         // Validate required fields
-        if (!brand || !model || !year || !price) {
+        if (!brand || !model || !year || !price || !mileage || !fuelType) {
             return res.status(400).json({ 
-                message: 'Missing required fields: brand, model, year, and price are required' 
+                message: 'Missing required fields: brand, model, year, price, mileage, and fuel type are required' 
+            });
+        }
+
+        // Validate fuel type
+        const validFuelTypes = ['gasoline', 'ethanol', 'diesel', 'flex', 'hybrid', 'electric'];
+        if (!validFuelTypes.includes(fuelType)) {
+            return res.status(400).json({
+                message: `Invalid fuel type. Must be one of: ${validFuelTypes.join(', ')}`
             });
         }
 
@@ -93,6 +101,8 @@ exports.addCar = async (req, res) => {
             year: parseInt(year),
             price: parseFloat(price),
             description: description || '',
+            mileage: parseInt(mileage),
+            fuelType,
             images: imageUrls,
             status: 'available'
         });
@@ -112,7 +122,7 @@ exports.updateCar = async (req, res) => {
             return res.status(404).json({ message: 'Car not found' });
         }
 
-        const { brand, model, year, price, description, status } = req.body;
+        const { brand, model, year, price, description, status, mileage, fuelType } = req.body;
         let imageUrls = car.images || [];
 
         if (req.files && req.files.length > 0) {
@@ -143,6 +153,8 @@ exports.updateCar = async (req, res) => {
             year: year ? parseInt(year) : car.year,
             price: price ? parseFloat(price) : car.price,
             description: description || car.description,
+            mileage: mileage ? parseInt(mileage) : car.mileage,
+            fuelType: fuelType || car.fuelType,
             images: imageUrls,
             status: status || car.status,
             updatedAt: new Date()
