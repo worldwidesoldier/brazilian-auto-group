@@ -14,6 +14,9 @@ router.post('/', carsController.uploadImage, carsController.addCar);
 // Atualizar carro (com upload de imagem opcional)
 router.put('/:id', carsController.uploadImage, carsController.updateCar);
 
+// Remover imagem específica de um carro
+router.delete('/:id/images', carsController.deleteImage);
+
 // Remover carro
 router.delete('/:id', carsController.deleteCar);
 

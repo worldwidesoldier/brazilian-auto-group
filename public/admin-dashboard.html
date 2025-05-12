@@ -39,6 +39,22 @@
                             <label class="block text-sm font-medium text-gray-700">Price (USD)</label>
                             <input type="number" name="price" step="0.01" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                         </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Mileage (km)</label>
+                            <input type="number" name="mileage" required min="0" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Fuel Type</label>
+                            <select name="fuelType" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                <option value="">Select fuel type</option>
+                                <option value="gasoline">Gasoline</option>
+                                <option value="ethanol">Ethanol</option>
+                                <option value="diesel">Diesel</option>
+                                <option value="flex">Flex</option>
+                                <option value="hybrid">Hybrid</option>
+                                <option value="electric">Electric</option>
+                            </select>
+                        </div>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Description</label>
@@ -46,8 +62,19 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Car Photos</label>
-                        <input type="file" name="images" accept="image/*" multiple required class="mt-1 block w-full">
-                        <small class="text-gray-500">You can upload up to 5 photos per car.</small>
+                        <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
+                            <div class="space-y-1 text-center">
+                                <div class="flex text-sm text-gray-600">
+                                    <label for="images" class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
+                                        <span>Upload photos</span>
+                                        <input id="images" name="images" type="file" accept="image/*" multiple class="sr-only" required>
+                                    </label>
+                                    <p class="pl-1">or drag and drop</p>
+                                </div>
+                                <p class="text-xs text-gray-500">PNG, JPG, WEBP up to 5MB each (max 5 photos)</p>
+                            </div>
+                        </div>
+                        <div id="imagePreview" class="mt-4 grid grid-cols-5 gap-4"></div>
                     </div>
                     <div>
                         <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
@@ -69,34 +96,67 @@
 
     <!-- Edit Car Modal -->
     <div id="editModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
-        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div class="relative top-20 mx-auto p-5 border w-11/12 max-w-4xl shadow-lg rounded-md bg-white">
             <div class="mt-3">
                 <h3 class="text-lg font-medium text-gray-900">Edit Car</h3>
                 <form id="editCarForm" class="mt-4 space-y-4">
                     <input type="hidden" name="id">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Brand</label>
-                        <input type="text" name="brand" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Model</label>
-                        <input type="text" name="model" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Year</label>
-                        <input type="number" name="year" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Price (USD)</label>
-                        <input type="number" name="price" step="0.01" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Brand</label>
+                            <input type="text" name="brand" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Model</label>
+                            <input type="text" name="model" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Year</label>
+                            <input type="number" name="year" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Price (USD)</label>
+                            <input type="number" name="price" step="0.01" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Mileage (km)</label>
+                            <input type="number" name="mileage" required min="0" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Fuel Type</label>
+                            <select name="fuelType" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                <option value="gasoline">Gasoline</option>
+                                <option value="ethanol">Ethanol</option>
+                                <option value="diesel">Diesel</option>
+                                <option value="flex">Flex</option>
+                                <option value="hybrid">Hybrid</option>
+                                <option value="electric">Electric</option>
+                            </select>
+                        </div>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Description</label>
                         <textarea name="description" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"></textarea>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">New Photos (optional, up to 5)</label>
-                        <input type="file" name="images" accept="image/*" multiple class="mt-1 block w-full">
+                        <label class="block text-sm font-medium text-gray-700">Current Photos</label>
+                        <div id="currentImages" class="mt-2 grid grid-cols-5 gap-4"></div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Add New Photos (optional)</label>
+                        <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
+                            <div class="space-y-1 text-center">
+                                <div class="flex text-sm text-gray-600">
+                                    <label for="editImages" class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
+                                        <span>Upload photos</span>
+                                        <input id="editImages" name="images" type="file" accept="image/*" multiple class="sr-only">
+                                    </label>
+                                    <p class="pl-1">or drag and drop</p>
+                                </div>
+                                <p class="text-xs text-gray-500">PNG, JPG, WEBP up to 5MB each (max 5 photos)</p>
+                            </div>
+                        </div>
+                        <div id="editImagePreview" class="mt-4 grid grid-cols-5 gap-4"></div>
                     </div>
                     <div class="flex justify-end space-x-3">
                         <button type="button" onclick="closeEditModal()" class="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
@@ -120,6 +180,47 @@
             }).format(price);
         }
 
+        // Preview images before upload
+        function previewImages(input, previewElement) {
+            const preview = document.getElementById(previewElement);
+            preview.innerHTML = '';
+
+            if (input.files) {
+                Array.from(input.files).forEach((file, index) => {
+                    if (index >= 5) return; // Limit to 5 images
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const div = document.createElement('div');
+                        div.className = 'relative';
+                        div.innerHTML = `
+                            <img src="${e.target.result}" class="w-full h-32 object-cover rounded">
+                            <button type="button" class="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600" onclick="removeImage(${index})">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        `;
+                        preview.appendChild(div);
+                    }
+                    reader.readAsDataURL(file);
+                });
+            }
+        }
+
+        // Remove image from preview
+        function removeImage(index) {
+            const dt = new DataTransfer();
+            const input = document.getElementById('images');
+            const { files } = input;
+
+            for (let i = 0; i < files.length; i++) {
+                if (i !== index) {
+                    dt.items.add(files[i]);
+                }
+            }
+
+            input.files = dt.files;
+            previewImages(input, 'imagePreview');
+        }
+
         // Load cars
         async function loadCars() {
             try {
@@ -129,35 +230,33 @@
                 carsList.innerHTML = '';
 
                 cars.forEach(car => {
-    const card = document.createElement('div');
-    card.className = 'bg-white rounded-lg shadow overflow-hidden p-2 flex flex-col';
-    let imagesHtml = '';
-    if (car.images && car.images.length > 0) {
-        car.images.forEach(imgUrl => {
-            imagesHtml += `<img src="${imgUrl}" class="w-full h-32 object-cover mb-2" alt="Car photo">`;
-        });
-    } else if (car.image) {
-        imagesHtml = `<img src="${car.image}" class="w-full h-32 object-cover mb-2" alt="Car photo">`;
-    }
-    card.innerHTML = `
-        ${imagesHtml}
-        <div class="p-2">
-            <h3 class="text-lg font-semibold">${car.brand} ${car.model}</h3>
-            <p class="text-gray-600">Year: ${car.year}</p>
-            <p class="text-gray-600">Price: ${formatPrice(car.price)}</p>
-            <p class="text-gray-600">Status: ${car.status === 'available' ? 'Available' : 'Sold'}</p>
-            <div class="mt-4 flex space-x-2">
-                <button onclick="openEditModal('${car._id}')" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">
-                    <i class="fas fa-edit"></i> Edit
-                </button>
-                <button onclick="deleteCar('${car._id}')" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700">
-                    <i class="fas fa-trash"></i> Remove
-                </button>
-            </div>
-        </div>
-    `;
-    carsList.appendChild(card);
-});
+                    const card = document.createElement('div');
+                    card.className = 'bg-white rounded-lg shadow overflow-hidden';
+                    
+                    // Use first image as main image
+                    const mainImage = car.images && car.images.length > 0 ? car.images[0] : '';
+                    
+                    card.innerHTML = `
+                        <img src="${mainImage}" class="w-full h-48 object-cover" alt="Car photo">
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold">${car.brand} ${car.model}</h3>
+                            <p class="text-gray-600">Year: ${car.year}</p>
+                            <p class="text-gray-600">Price: ${formatPrice(car.price)}</p>
+                            <p class="text-gray-600">Mileage: ${car.mileage} km</p>
+                            <p class="text-gray-600">Fuel: ${car.fuelType}</p>
+                            <p class="text-gray-600">Status: ${car.status === 'available' ? 'Available' : 'Sold'}</p>
+                            <div class="mt-4 flex space-x-2">
+                                <button onclick="openEditModal('${car._id}')" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button onclick="deleteCar('${car._id}')" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700">
+                                    <i class="fas fa-trash"></i> Remove
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    carsList.appendChild(card);
+                });
             } catch (error) {
                 console.error('Error loading cars:', error);
                 alert('Error loading cars. Please try again.');
@@ -177,6 +276,7 @@
 
                 if (response.ok) {
                     e.target.reset();
+                    document.getElementById('imagePreview').innerHTML = '';
                     loadCars();
                     alert('Car added successfully!');
                 } else {
@@ -207,6 +307,25 @@
                     form.year.value = car.year;
                     form.price.value = car.price;
                     form.description.value = car.description;
+                    form.mileage.value = car.mileage;
+                    form.fuelType.value = car.fuelType;
+
+                    // Display current images
+                    const currentImages = document.getElementById('currentImages');
+                    currentImages.innerHTML = '';
+                    if (car.images && car.images.length > 0) {
+                        car.images.forEach((imageUrl, index) => {
+                            const div = document.createElement('div');
+                            div.className = 'relative';
+                            div.innerHTML = `
+                                <img src="${imageUrl}" class="w-full h-32 object-cover rounded">
+                                <button type="button" class="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600" onclick="removeExistingImage('${car._id}', '${imageUrl}')">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            `;
+                            currentImages.appendChild(div);
+                        });
+                    }
                 })
                 .catch(error => {
                     console.error('Error loading car:', error);
@@ -218,6 +337,33 @@
             const modal = document.getElementById('editModal');
             modal.classList.add('hidden');
             currentCarId = null;
+            document.getElementById('editImagePreview').innerHTML = '';
+        }
+
+        // Remove existing image
+        async function removeExistingImage(carId, imageUrl) {
+            if (!confirm('Are you sure you want to remove this image?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/cars/${carId}/images`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ imageUrl })
+                });
+
+                if (response.ok) {
+                    openEditModal(carId); // Reload car data
+                } else {
+                    throw new Error('Error removing image');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error removing image. Please try again.');
+            }
         }
 
         document.getElementById('editCarForm').addEventListener('submit', async (e) => {
@@ -266,8 +412,19 @@
             }
         }
 
-        // Load cars on start
-        loadCars();
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCars();
+            
+            // Image preview handlers
+            document.getElementById('images').addEventListener('change', function() {
+                previewImages(this, 'imagePreview');
+            });
+            
+            document.getElementById('editImages').addEventListener('change', function() {
+                previewImages(this, 'editImagePreview');
+            });
+        });
     </script>
 </body>
 </html>

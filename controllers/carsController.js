@@ -199,3 +199,34 @@ exports.deleteCar = async (req, res) => {
         res.status(500).json({ message: 'Error deleting car' });
     }
 };
+
+exports.deleteImage = async (req, res) => {
+    try {
+        const car = await Car.findById(req.params.id);
+        if (!car) {
+            return res.status(404).json({ message: 'Car not found' });
+        }
+
+        const { imageUrl } = req.body;
+        if (!imageUrl) {
+            return res.status(400).json({ message: 'Image URL is required' });
+        }
+
+        // Remove image from S3
+        try {
+            await deleteFromS3(imageUrl);
+        } catch (deleteError) {
+            console.error('Error deleting image from S3:', deleteError);
+            return res.status(500).json({ message: 'Error deleting image from storage' });
+        }
+
+        // Remove image URL from car's images array
+        car.images = car.images.filter(img => img !== imageUrl);
+        await car.save();
+
+        res.status(200).json({ message: 'Image deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting image:', error);
+        res.status(500).json({ message: 'Error deleting image' });
+    }
+};
