@@ -648,6 +648,16 @@ if (contactForm) {
   });
 }
 
+// Seleciona o botão e o menu mobile
+const mobileMenuBtn = document.querySelector('.header-mobile');
+const headerMenu = document.querySelector('.header-menu');
+
+if (mobileMenuBtn && headerMenu) {
+  mobileMenuBtn.addEventListener('click', () => {
+    headerMenu.classList.toggle('hidden');
+  });
+}
+
 document.addEventListener('DOMContentLoaded', loadCars);
 </script>
 
