@@ -190,20 +190,8 @@
                         <div id="currentImages" class="mt-2 grid grid-cols-5 gap-4"></div>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Add New Photos (optional)</label>
-                        <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
-                            <div class="space-y-1 text-center">
-                                <div class="flex text-sm text-gray-600">
-                                    <label for="editImages" class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
-                                        <span>Upload photos</span>
-                                        <input id="editImages" name="images" type="file" accept="image/*" multiple class="sr-only">
-                                    </label>
-                                    <p class="pl-1">or drag and drop</p>
-                                </div>
-                                <p class="text-xs text-gray-500">PNG, JPG, WEBP up to 5MB each (max 5 photos)</p>
-                            </div>
-                        </div>
-                        <div id="editImagePreview" class="mt-4 grid grid-cols-5 gap-4"></div>
+                        <label class="block text-sm font-medium text-gray-700">Add/Edit Photos</label>
+                        <input id="editImages" name="editImages" type="file" accept="image/*" multiple>
                     </div>
                     <div class="flex justify-end space-x-3">
                         <button type="button" onclick="closeEditModal()" class="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
@@ -316,11 +304,16 @@
 
         // Edit car
         let currentCarId = null;
+        let pond = null;
+        let editPond = null;
 
         function openEditModal(carId) {
             currentCarId = carId;
             const modal = document.getElementById('editModal');
             modal.classList.remove('hidden');
+
+            // Limpar imagens do FilePond de edição
+            if (editPond) editPond.removeFiles();
 
             // Load car data
             fetch(`/api/cars/${carId}`)
@@ -338,21 +331,21 @@
                     form.financedPrice.value = car.financedPrice;
                     form.vinNumber.value = car.vinNumber;
 
-                    // Display current images
-                    const currentImages = document.getElementById('currentImages');
-                    currentImages.innerHTML = '';
-                    if (car.images && car.images.length > 0) {
-                        car.images.forEach((imageUrl, index) => {
-                            const div = document.createElement('div');
-                            div.className = 'relative';
-                            div.innerHTML = `
-                                <img src="${imageUrl}" class="w-full h-32 object-cover rounded">
-                                <button type="button" class="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600" onclick="removeExistingImage('${car._id}', '${imageUrl}')">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            `;
-                            currentImages.appendChild(div);
-                        });
+                    // Carregar imagens atuais no FilePond de edição
+                    if (editPond && car.images && car.images.length > 0) {
+                        const files = car.images.map((url, idx) => ({
+                            source: url,
+                            options: {
+                                type: 'local',
+                                file: {
+                                    name: `image${idx}.jpg`,
+                                    size: null,
+                                    type: 'image/*'
+                                },
+                                metadata: { url }
+                            }
+                        }));
+                        editPond.files = files;
                     }
                 })
                 .catch(error => {
@@ -397,6 +390,16 @@
         document.getElementById('editCarForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const formData = new FormData(e.target);
+            // Remove imagens do formData e adiciona as do FilePond de edição
+            formData.delete('editImages');
+            if (editPond) {
+                editPond.getFiles().forEach(fileItem => {
+                    // Só envia arquivos novos (não os locais já existentes)
+                    if (fileItem.origin === FilePond.FileOrigin.INPUT || fileItem.origin === FilePond.FileOrigin.LIMBO) {
+                        formData.append('images', fileItem.file);
+                    }
+                });
+            }
 
             try {
                 const response = await fetch(`/api/cars/${currentCarId}`, {
@@ -453,16 +456,38 @@
                 previewImages(this, 'editImagePreview');
             });
 
-            // Inicializar FilePond para o input de imagens
+            // Inicializar FilePond para o input de imagens do cadastro
             FilePond.registerPlugin(
                 FilePondPluginImagePreview,
                 FilePondPluginFileValidateType,
                 FilePondPluginFileValidateSize
             );
             const imagesInput = document.querySelector('input[name="images"]');
-            let pond = null;
             if (imagesInput) {
                 pond = FilePond.create(imagesInput, {
+                    allowMultiple: true,
+                    maxFiles: 5,
+                    acceptedFileTypes: ['image/*'],
+                    maxFileSize: '5MB',
+                    labelIdle: 'Arraste as fotos ou <span class="filepond--label-action">clique para selecionar</span> (máx 5)',
+                    allowImagePreview: false,
+                    allowFilePoster: false,
+                    allowFileTypeValidation: true,
+                    allowFileSizeValidation: true,
+                    itemInsertLocation: 'after',
+                    styleItemPanelAspectRatio: 0.2,
+                    styleItemPanelRemoveItemPosition: 'right',
+                    styleButtonRemoveItemPosition: 'right',
+                    styleLoadIndicatorPosition: 'center',
+                    styleProgressIndicatorPosition: 'right',
+                    styleButtonProcessItemPosition: 'right',
+                    stylePanelLayout: 'compact',
+                });
+            }
+            // Inicializar FilePond para o input de imagens do modal de edição
+            const editImagesInput = document.getElementById('editImages');
+            if (editImagesInput) {
+                editPond = FilePond.create(editImagesInput, {
                     allowMultiple: true,
                     maxFiles: 5,
                     acceptedFileTypes: ['image/*'],
