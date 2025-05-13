@@ -386,7 +386,9 @@ const MOCK_CARS = [
     year: 2018,
     mileage: 45000,
     fuelType: 'Gasoline',
-    price: 13900,
+    cashPrice: 13900,
+    financedPrice: 15500,
+    vinNumber: '1HGCM82633A123456',
     status: 'available',
     images: ['/images/no-image.png'],
     description: 'Reliable and economic sedan, perfect for city driving.'
@@ -398,7 +400,9 @@ const MOCK_CARS = [
     year: 2017,
     mileage: 52000,
     fuelType: 'Gasoline',
-    price: 14500,
+    cashPrice: 14500,
+    financedPrice: 16000,
+    vinNumber: '2HGCM82633A654321',
     status: 'available',
     images: ['/images/no-image.png'],
     description: 'Sporty and comfortable, with great fuel efficiency.'
@@ -410,7 +414,9 @@ const MOCK_CARS = [
     year: 2019,
     mileage: 39000,
     fuelType: 'Flex',
-    price: 16900,
+    cashPrice: 16900,
+    financedPrice: 18500,
+    vinNumber: '3GNAXKEV8KS123456',
     status: 'available',
     images: ['/images/no-image.png'],
     description: 'Spacious SUV, ideal for families and trips.'
@@ -418,7 +424,9 @@ const MOCK_CARS = [
 ];
 
 function formatPrice(price) {
-  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(price);
+  const num = Number(price);
+  if (isNaN(num)) return 'N/A';
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(num);
 }
 
 function showError(container, message) {
@@ -487,6 +495,9 @@ async function loadCars() {
 function renderCars(cars, container, isFeatured) {
   cars.forEach(car => {
     const mainImage = car.images && car.images.length > 0 ? car.images[0] : '/images/no-image.png';
+    const cash = car.cashPrice !== undefined ? formatPrice(car.cashPrice) : 'N/A';
+    const financed = car.financedPrice !== undefined ? formatPrice(car.financedPrice) : 'N/A';
+    const vin = car.vinNumber || 'N/A';
     if (isFeatured) {
       container.innerHTML += `
         <div class="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col">
@@ -502,13 +513,13 @@ function renderCars(cars, container, isFeatured) {
               <span><i class="fas fa-gas-pump mr-1"></i> ${car.fuelType}</span>
             </div>
             <div class="mb-2">
-              <span class="text-2xl font-bold text-brand-green">${formatPrice(car.cashPrice)}</span>
+              <span class="text-2xl font-bold text-brand-green">${cash}</span>
             </div>
             <div class="mb-2">
-              <span class="text-sm text-gray-500">Financed: ${formatPrice(car.financedPrice)}</span>
+              <span class="text-sm text-gray-500">Financed: ${financed}</span>
             </div>
             <div class="mb-2">
-              <span class="text-xs text-gray-400">VIN: ${car.vinNumber}</span>
+              <span class="text-xs text-gray-400">VIN: ${vin}</span>
             </div>
             <button onclick="openModal('${car._id}')" class="block text-center bg-brand-green hover:bg-green-600 text-white font-medium py-2 px-4 rounded-md transition duration-300 ease-in-out mt-auto">View Details</button>
           </div>
@@ -529,13 +540,13 @@ function renderCars(cars, container, isFeatured) {
               <span><i class="fas fa-gas-pump mr-1"></i> ${car.fuelType}</span>
             </div>
             <div class="mb-2">
-              <span class="text-2xl font-bold text-brand-green">${formatPrice(car.cashPrice)}</span>
+              <span class="text-2xl font-bold text-brand-green">${cash}</span>
             </div>
             <div class="mb-2">
-              <span class="text-sm text-gray-500">Financed: ${formatPrice(car.financedPrice)}</span>
+              <span class="text-sm text-gray-500">Financed: ${financed}</span>
             </div>
             <div class="mb-2">
-              <span class="text-xs text-gray-400">VIN: ${car.vinNumber}</span>
+              <span class="text-xs text-gray-400">VIN: ${vin}</span>
             </div>
             <button onclick="openModal('${car._id}')" class="block text-center bg-brand-green hover:bg-green-600 text-white font-medium py-2 px-4 rounded-md transition duration-300 ease-in-out mt-auto">View Details</button>
           </div>
