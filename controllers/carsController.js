@@ -65,12 +65,12 @@ exports.getCarById = async (req, res) => {
 
 exports.addCar = async (req, res) => {
     try {
-        const { brand, model, year, price, description, mileage, fuelType } = req.body;
+        const { brand, model, year, cashPrice, financedPrice, vinNumber, description, mileage, fuelType } = req.body;
 
         // Validate required fields
-        if (!brand || !model || !year || !price || !mileage || !fuelType) {
+        if (!brand || !model || !year || !cashPrice || !financedPrice || !vinNumber || !mileage || !fuelType) {
             return res.status(400).json({ 
-                message: 'Missing required fields: brand, model, year, price, mileage, and fuel type are required' 
+                message: 'Missing required fields: brand, model, year, cashPrice, financedPrice, vinNumber, mileage, and fuel type are required' 
             });
         }
 
@@ -99,7 +99,9 @@ exports.addCar = async (req, res) => {
             brand,
             model,
             year: parseInt(year),
-            price: parseFloat(price),
+            cashPrice: parseFloat(cashPrice),
+            financedPrice: parseFloat(financedPrice),
+            vinNumber: vinNumber.trim(),
             description: description || '',
             mileage: parseInt(mileage),
             fuelType,
@@ -122,7 +124,7 @@ exports.updateCar = async (req, res) => {
             return res.status(404).json({ message: 'Car not found' });
         }
 
-        const { brand, model, year, price, description, status, mileage, fuelType } = req.body;
+        const { brand, model, year, cashPrice, financedPrice, vinNumber, description, status, mileage, fuelType } = req.body;
         let imageUrls = car.images || [];
 
         if (req.files && req.files.length > 0) {
@@ -151,7 +153,9 @@ exports.updateCar = async (req, res) => {
             brand: brand || car.brand,
             model: model || car.model,
             year: year ? parseInt(year) : car.year,
-            price: price ? parseFloat(price) : car.price,
+            cashPrice: cashPrice ? parseFloat(cashPrice) : car.cashPrice,
+            financedPrice: financedPrice ? parseFloat(financedPrice) : car.financedPrice,
+            vinNumber: vinNumber ? vinNumber.trim() : car.vinNumber,
             description: description || car.description,
             mileage: mileage ? parseInt(mileage) : car.mileage,
             fuelType: fuelType || car.fuelType,

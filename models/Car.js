@@ -4,7 +4,18 @@ const carSchema = new mongoose.Schema({
     brand: String,
     model: String,
     year: Number,
-    price: Number,
+    cashPrice: {
+        type: Number,
+        required: true
+    },
+    financedPrice: {
+        type: Number,
+        required: true
+    },
+    vinNumber: {
+        type: String,
+        required: true
+    },
     description: String,
     mileage: {
         type: Number,

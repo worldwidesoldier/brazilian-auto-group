@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const carsController = require('../controllers/carsController');
+const contactController = require('../controllers/contactController');
 
 // Listar todos os carros
 router.get('/', carsController.getAllCars);
@@ -19,5 +20,7 @@ router.delete('/:id/images', carsController.deleteImage);
 
 // Remover carro
 router.delete('/:id', carsController.deleteCar);
+
+router.post('/contact', contactController.sendContactEmail);
 
 module.exports = router; 

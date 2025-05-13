@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Details - Brazilian Auto Group</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css">        .bg-brand-dark { background-color: #0a2713; }
+        .bg-brand-green { background-color: #4CAF50; }
+        .text-brand-green { color: #4CAF50; }
+        .border-brand-green { border-color: #4CAF50; }
+        .carousel-img { max-height: 400px; object-fit: cover; }
+    </style>
+</head>
+<body class="bg-white text-gray-800">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center">
+                    <img src="https://page1.genspark.site/v1/base64_upload/d31efdedb1232115fd6ffa6c27cb9e5b" alt="Brazilian Auto Group Logo" class="h-12">
+                </div>
+                <div class="hidden md:flex space-x-6">
+                    <a href="/" class="text-gray-800 hover:text-brand-green font-medium">Home</a>
+                    <a href="/cars.html" class="text-gray-800 hover:text-brand-green font-medium">Inventory</a>
+                    <a href="#financing" class="text-gray-800 hover:text-brand-green font-medium">Financing</a>
+                    <a href="#about" class="text-gray-800 hover:text-brand-green font-medium">About Us</a>
+                    <a href="#contact" class="text-gray-800 hover:text-brand-green font-medium">Contact</a>
+                </div>
+                <div class="md:hidden">
+                    <button class="text-gray-800 focus:outline-none">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Car Details Section -->
+    <section class="py-12 bg-gray-100 min-h-screen">
+        <div class="container mx-auto px-4">
+            <div id="carDetails" class="bg-white rounded-lg shadow-lg p-8 flex flex-col md:flex-row gap-8">
+                <!-- Car details will be loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-brand-dark text-white py-10 mt-12">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-wrap">
+                <div class="w-full md:w-1/3 mb-6 md:mb-0">
+                    <img src="https://page1.genspark.site/v1/base64_upload/d31efdedb1232115fd6ffa6c27cb9e5b" alt="Brazilian Auto Group Logo" class="h-16 mb-4">
+                    <p class="text-gray-400">Quality used vehicles with accessible financing options for the immigrant community.</p>
+                </div>
+                <div class="w-full md:w-1/3 mb-6 md:mb-0">
+                    <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2">
+                        <li><a href="/" class="text-gray-400 hover:text-white">Home</a></li>
+                        <li><a href="/cars.html" class="text-gray-400 hover:text-white">Inventory</a></li>
+                        <li><a href="#financing" class="text-gray-400 hover:text-white">Financing</a></li>
+                        <li><a href="#about" class="text-gray-400 hover:text-white">About Us</a></li>
+                        <li><a href="#contact" class="text-gray-400 hover:text-white">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="w-full md:w-1/3">
+                    <h4 class="text-lg font-semibold mb-4">Contact Us</h4>
+                    <ul class="space-y-2">
+                        <li class="flex items-start">
+                            <i class="fas fa-map-marker-alt mt-1 mr-3 text-brand-green"></i>
+                            <span>123 Main Street<br>Newark, NJ 07102</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-phone mt-1 mr-3 text-brand-green"></i>
+                            <span>(973) 393-8674</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-envelope mt-1 mr-3 text-brand-green"></i>
+                            <span>info@brazilianautogroup.com</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="border-gray-800 my-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-400 mb-4 md:mb-0">&copy; 2025 Brazilian Auto Group. All rights reserved.</p>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+    // Utilitário para formatar preço
+    function formatPrice(price) {
+        return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD'
+        }).format(price);
+    }
+
+    // Pega o ID do carro da URL
+    function getCarIdFromUrl() {
+        const params = new URLSearchParams(window.location.search);
+        return params.get('id');
+    }
+
+    async function loadCarDetails() {
+        const carId = getCarIdFromUrl();
+        if (!carId) {
+            document.getElementById('carDetails').innerHTML = '<p class="text-red-600">Car not found.</p>';
+            return;
+        }
+        try {
+            const response = await fetch(`/api/cars/${carId}`);
+            if (!response.ok) throw new Error('Car not found');
+            const car = await response.json();
+
+            // Galeria de imagens
+            let imagesHtml = '';
+            if (car.images && car.images.length > 0) {
+                imagesHtml = `
+                    <div class="flex flex-col gap-4 md:w-1/2">
+                        <div class="w-full">
+                            <img src="${car.images[0]}" class="carousel-img w-full rounded-lg shadow" alt="Car photo">
+                        </div>
+                        <div class="flex gap-2 mt-2">
+                            ${car.images.map(img => `<img src="${img}" class="h-20 w-28 object-cover rounded cursor-pointer border-2 border-transparent hover:border-brand-green" onclick="document.querySelector('.carousel-img').src='${img}'">`).join('')}
+                        </div>
+                    </div>
+                `;
+            } else {
+                imagesHtml = `<div class="md:w-1/2"><img src="/images/no-image.png" class="carousel-img w-full rounded-lg shadow" alt="No image"></div>`;
+            }
+
+            // Detalhes do carro
+            let detailsHtml = `
+                <div class="flex-1 flex flex-col justify-between">
+                    <div>
+                        <h2 class="text-3xl font-bold mb-2">${car.brand} ${car.model}</h2>
+                        <p class="text-lg text-gray-600 mb-4">${car.year} &bull; ${car.fuelType} &bull; ${car.mileage} km</p>
+                        <div class="mb-4">
+                            <span class="text-2xl font-bold text-brand-green">${formatPrice(car.price)}</span>
+                            <span class="ml-2 text-gray-500">${car.status === 'available' ? 'Available' : 'Sold'}</span>
+                        </div>
+                        <p class="mb-4">${car.description || ''}</p>
+                    </div>
+                    <div class="mt-6">
+                        <a href="/cars.html" class="inline-block bg-brand-green hover:bg-green-600 text-white font-medium py-2 px-6 rounded-md transition duration-300 ease-in-out">Back to Inventory</a>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('carDetails').innerHTML = imagesHtml + detailsHtml;
+        } catch (error) {
+            document.getElementById('carDetails').innerHTML = '<p class="text-red-600">Car not found.</p>';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadCarDetails);
+    </script>
+</body>
+</html>
