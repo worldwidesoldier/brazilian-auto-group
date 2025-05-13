@@ -418,7 +418,12 @@
                     loadCars();
                     alert('Car updated successfully!');
                 } else {
-                    throw new Error('Error updating car');
+                    let errorMsg = 'Error updating car';
+                    try {
+                        const data = await response.json();
+                        if (data && data.message) errorMsg = data.message;
+                    } catch (err) {}
+                    alert(errorMsg);
                 }
             } catch (error) {
                 console.error('Error:', error);
