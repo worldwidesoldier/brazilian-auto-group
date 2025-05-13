@@ -394,8 +394,13 @@
             formData.delete('editImages');
             formData.delete('images');
             if (editPond) {
+                // Adicionar campo oldImages com as imagens locais que sobraram
+                const oldImages = editPond.getFiles()
+                    .filter(f => f.origin === FilePond.FileOrigin.LIMBO || f.origin === FilePond.FileOrigin.LOCAL)
+                    .map(f => f.source);
+                formData.append('oldImages', JSON.stringify(oldImages));
+                // Só envia arquivos realmente novos
                 editPond.getFiles().forEach(fileItem => {
-                    // Só envia arquivos realmente novos
                     if (fileItem.origin === FilePond.FileOrigin.INPUT) {
                         formData.append('images', fileItem.file);
                     }
