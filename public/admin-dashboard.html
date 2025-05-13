@@ -457,7 +457,7 @@
                     body: formData
                 });
 
-                if (response.ok) {
+                if (response.status >= 200 && response.status < 300) {
                     closeEditModal();
                     loadCars();
                     alert('Car updated successfully!');
