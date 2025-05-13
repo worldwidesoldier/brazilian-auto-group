@@ -125,29 +125,42 @@ exports.updateCar = async (req, res) => {
         }
 
         const { brand, model, year, cashPrice, financedPrice, vinNumber, description, status, mileage, fuelType } = req.body;
-        let imageUrls = car.images || [];
-
+        // Recebe as imagens antigas que sobraram (do frontend)
+        let oldImages = [];
+        if (req.body.oldImages) {
+            try {
+                oldImages = JSON.parse(req.body.oldImages);
+            } catch (e) {
+                oldImages = Array.isArray(req.body.oldImages) ? req.body.oldImages : [req.body.oldImages];
+            }
+        } else {
+            oldImages = car.images || [];
+        }
+        let newImageUrls = [];
         if (req.files && req.files.length > 0) {
             try {
-                // Remove old images from S3
-                if (car.images && car.images.length > 0) {
-                    for (const imageUrl of car.images) {
-                        await deleteFromS3(imageUrl);
-                    }
-                }
-
-                // Upload new images
-                imageUrls = [];
                 for (const file of req.files) {
                     const url = await uploadToS3(file);
-                    imageUrls.push(url);
+                    newImageUrls.push(url);
                 }
             } catch (uploadError) {
-                console.error('Error handling images:', uploadError);
-                return res.status(500).json({ message: 'Error handling images' });
+                console.error('Error uploading new images:', uploadError);
+                return res.status(500).json({ message: 'Error uploading new images' });
             }
         }
-
+        // Juntar antigas + novas, sem passar de 5
+        const allImages = [...oldImages, ...newImageUrls].slice(0, 5);
+        // Apagar do S3 as imagens removidas
+        const removedImages = (car.images || []).filter(img => !oldImages.includes(img));
+        if (removedImages.length > 0) {
+            for (const imageUrl of removedImages) {
+                try {
+                    await deleteFromS3(imageUrl);
+                } catch (deleteError) {
+                    console.error('Error deleting image from S3:', deleteError);
+                }
+            }
+        }
         // Update car fields
         const updates = {
             brand: brand || car.brand,
@@ -159,17 +172,15 @@ exports.updateCar = async (req, res) => {
             description: description || car.description,
             mileage: mileage ? parseInt(mileage) : car.mileage,
             fuelType: fuelType || car.fuelType,
-            images: imageUrls,
+            images: allImages,
             status: status || car.status,
             updatedAt: new Date()
         };
-
         const updatedCar = await Car.findByIdAndUpdate(
             req.params.id,
             updates,
             { new: true, runValidators: true }
         );
-
         res.json(updatedCar);
     } catch (error) {
         console.error('Error updating car:', error);
