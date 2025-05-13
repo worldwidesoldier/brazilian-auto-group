@@ -6,6 +6,9 @@
     <title>Admin Dashboard - Brazilian Auto Group</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Adicionar FilePond CSS -->
+    <link href="https://unpkg.com/filepond@^4/dist/filepond.css" rel="stylesheet">
+    <link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100">
     <div class="min-h-screen">
@@ -186,6 +189,12 @@
             </div>
         </div>
     </div>
+
+    <!-- Adicionar FilePond JS -->
+    <script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
+    <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
+    <script src="https://unpkg.com/filepond-plugin-file-validate-type/dist/filepond-plugin-file-validate-type.js"></script>
+    <script src="https://unpkg.com/filepond-plugin-file-validate-size/dist/filepond-plugin-file-validate-size.js"></script>
 
     <script>
         // Format price in USD
@@ -450,6 +459,29 @@
             document.getElementById('editImages').addEventListener('change', function() {
                 previewImages(this, 'editImagePreview');
             });
+
+            // Inicializar FilePond para o input de imagens
+            FilePond.registerPlugin(
+                FilePondPluginImagePreview,
+                FilePondPluginFileValidateType,
+                FilePondPluginFileValidateSize
+            );
+            const imagesInput = document.querySelector('input[name="images"]');
+            if (imagesInput) {
+                FilePond.create(imagesInput, {
+                    allowMultiple: true,
+                    maxFiles: 5,
+                    acceptedFileTypes: ['image/*'],
+                    maxFileSize: '5MB',
+                    labelIdle: 'Arraste as fotos ou <span class="filepond--label-action">clique para selecionar</span> (máx 5)',
+                    imagePreviewHeight: 120,
+                    stylePanelAspectRatio: 1.5,
+                    styleLoadIndicatorPosition: 'center bottom',
+                    styleProgressIndicatorPosition: 'right bottom',
+                    styleButtonRemoveItemPosition: 'left bottom',
+                    styleButtonProcessItemPosition: 'right bottom'
+                });
+            }
         });
     </script>
 </body>
