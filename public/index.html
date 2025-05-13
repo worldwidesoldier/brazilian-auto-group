@@ -38,7 +38,7 @@
   <header class="shadow-lg" style="background-color: #0a2713;">
     <nav class="container mx-auto px-4 py-3 flex items-center justify-between">
       <div class="flex items-center space-x-2">
-        <img src="https://page1.genspark.site/v1/base64_upload/d31efdedb1232115fd6ffa6c27cb9e5b" alt="Brazilian Auto Group Logo" class="h-16">
+        <img src="https://page1.genspark.site/v1/base64_upload/d31efdedb1232115fd6ffa6c27cb9e5b" alt="Brazilian Auto Group Logo" class="h-20">
       </div>
       <div class="hidden md:flex space-x-10 header-menu">
         <a href="#inventory" class="nav-link text-white font-medium hover:text-primary-green transition-colors">Inventory</a>
@@ -52,10 +52,7 @@
           <i class="fas fa-phone mr-2"></i>
           <span class="hidden md:inline">(973) 393-8674</span>
         </a>
-        <a href="#contact" 
-          style="color:#0a2713; border:2px solid #0a2713; background:#fff; font-family: 'Montserrat', sans-serif; padding:0.5rem 2rem; border-radius:0.375rem; font-weight:500; box-shadow:0 2px 8px rgba(0,0,0,0.08); transition:background 0.2s;"
-          onmouseover="this.style.background='#f3f4f6'" 
-          onmouseout="this.style.background='#fff'">
+        <a href="https://wa.me/19733938674" target="_blank" class="bg-transparent text-primary-dark border-2 border-primary-dark px-8 py-3 rounded-md font-medium shadow-lg text-lg" style="color:#0a2713; border:2px solid #0a2713; background:#fff; font-family: 'Montserrat', sans-serif; padding:0.5rem 2rem; border-radius:0.375rem; font-weight:500; box-shadow:0 2px 8px rgba(0,0,0,0.08); transition:background 0.2s;" onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='#fff'">
           Contact Us
         </a>
       </div>
@@ -509,13 +506,13 @@ function renderCars(cars, container, isFeatured) {
               <span><i class="fas fa-tachometer-alt mr-1"></i> ${car.mileage} mi</span>
               <span><i class="fas fa-gas-pump mr-1"></i> ${car.fuelType}</span>
             </div>
-            <div class="mb-2">
+            <div class="mb-1">
               <span class="font-bold text-brand-green">Cash Price:</span>
               <span class="text-2xl font-bold text-brand-green ml-2">${cash}</span>
             </div>
-            <div class="mb-2">
-              <span class="font-bold text-gray-500">Financed Price:</span>
-              <span class="text-lg text-gray-500 ml-2">${financed}</span>
+            <div class="mb-1">
+              <span class="font-bold text-gray-500" style="font-size:0.95rem;">Financed Price:</span>
+              <span class="text-base text-gray-500 ml-2" style="font-size:0.95rem;">${financed}</span>
             </div>
             <div class="mb-2">
               <span class="text-xs text-gray-400">VIN: ${vin}</span>
@@ -539,13 +536,13 @@ function renderCars(cars, container, isFeatured) {
               <span><i class="fas fa-tachometer-alt mr-1"></i> ${car.mileage} mi</span>
               <span><i class="fas fa-gas-pump mr-1"></i> ${car.fuelType}</span>
             </div>
-            <div class="mb-2">
+            <div class="mb-1">
               <span class="font-bold text-brand-green">Cash Price:</span>
               <span class="text-2xl font-bold text-brand-green ml-2">${cash}</span>
             </div>
-            <div class="mb-2">
-              <span class="font-bold text-gray-500">Financed Price:</span>
-              <span class="text-lg text-gray-500 ml-2">${financed}</span>
+            <div class="mb-1">
+              <span class="font-bold text-gray-500" style="font-size:0.95rem;">Financed Price:</span>
+              <span class="text-base text-gray-500 ml-2" style="font-size:0.95rem;">${financed}</span>
             </div>
             <div class="mb-2">
               <span class="text-xs text-gray-400">VIN: ${vin}</span>
