@@ -64,7 +64,7 @@
           Contact Us
         </a>
       </div>
-      <button class="md:hidden text-white focus:outline-none header-mobile" style="display:none;">
+      <button class="md:hidden text-white focus:outline-none header-mobile">
         <i class="fas fa-bars text-xl"></i>
       </button>
     </nav>
@@ -368,52 +368,6 @@
 // Configuração dos endpoints
 const REMOTE_API_URL = 'https://brazilian-auto-group.onrender.com/api/cars';
 
-// Mock de carros para desenvolvimento local SEMPRE
-const MOCK_CARS = [
-  {
-    _id: 'mock1',
-    brand: 'Toyota',
-    model: 'Corolla',
-    year: 2018,
-    mileage: 45000,
-    fuelType: 'Gasoline',
-    cashPrice: 13900,
-    financedPrice: 15500,
-    vinNumber: '1HGCM82633A123456',
-    status: 'available',
-    images: ['/images/no-image.png'],
-    description: 'Reliable and economic sedan, perfect for city driving.'
-  },
-  {
-    _id: 'mock2',
-    brand: 'Honda',
-    model: 'Civic',
-    year: 2017,
-    mileage: 52000,
-    fuelType: 'Gasoline',
-    cashPrice: 14500,
-    financedPrice: 16000,
-    vinNumber: '2HGCM82633A654321',
-    status: 'available',
-    images: ['/images/no-image.png'],
-    description: 'Sporty and comfortable, with great fuel efficiency.'
-  },
-  {
-    _id: 'mock3',
-    brand: 'Chevrolet',
-    model: 'Equinox',
-    year: 2019,
-    mileage: 39000,
-    fuelType: 'Flex',
-    cashPrice: 16900,
-    financedPrice: 18500,
-    vinNumber: '3GNAXKEV8KS123456',
-    status: 'available',
-    images: ['/images/no-image.png'],
-    description: 'Spacious SUV, ideal for families and trips.'
-  }
-];
-
 function formatPrice(price) {
   const num = Number(price);
   if (isNaN(num)) return 'N/A';
@@ -430,185 +384,120 @@ function showError(container, message) {
   `;
 }
 
-// SEMPRE usar mock localmente
-async function fetchCars() {
+// Carregar Featured e Inventory
+async function loadCars() {
   try {
     const response = await fetch(REMOTE_API_URL);
     if (!response.ok) throw new Error('API não respondeu');
-    return await response.json();
-  } catch (e) {
-    return MOCK_CARS;
-  }
-}
+    const cars = await response.json();
 
-// Carregar Featured e Inventory
-async function loadCars() {
-  const cars = await fetchCars();
-  const featuredContainer = document.getElementById('featuredCars');
-  const inventoryContainer = document.getElementById('carsList');
-
-  if (!cars) {
-    // Se não conseguiu buscar de lugar nenhum, mostra mock
-    showError(featuredContainer, 'Não foi possível carregar os veículos em destaque. Mostrando exemplos.');
-    showError(inventoryContainer, 'Não foi possível carregar o inventário de veículos. Mostrando exemplos.');
-    renderCars(MOCK_CARS, featuredContainer, true);
-    renderCars(MOCK_CARS, inventoryContainer, false);
-    return;
-  }
-
-  // Featured (primeiros 3 disponíveis)
-  const featured = cars.filter(c => c.status === 'available').slice(0, 3);
-  if (featuredContainer) {
-    if (featured.length === 0) {
-      showError(featuredContainer, 'Nenhum veículo em destaque disponível no momento.');
-    } else {
+    // Featured (primeiros 3 disponíveis)
+    const featured = cars.filter(c => c.status === 'available').slice(0, 3);
+    const featuredContainer = document.getElementById('featuredCars');
+    if (featuredContainer) {
       featuredContainer.innerHTML = '';
-      renderCars(featured, featuredContainer, true);
+      featured.forEach(car => {
+        const mainImage = car.images && car.images.length > 0 ? car.images[0] : '/images/no-image.png';
+        featuredContainer.innerHTML += `
+          <div class="car-card bg-white rounded-lg shadow-lg overflow-hidden">
+            <img src="${mainImage}" alt="${car.brand} ${car.model}" class="w-full h-48 object-cover">
+            <div class="p-4">
+              <h3 class="text-xl font-semibold">${car.brand} ${car.model}</h3>
+              <p class="text-gray-600">${car.year} &bull; ${car.fuelType} &bull; ${car.mileage} mi</p>
+              <p class="text-brand-green font-bold mt-2">${formatPrice(car.cashPrice)}</p>
+              <p class="text-sm text-gray-500">Financed: ${formatPrice(car.financedPrice)}</p>
+              <button onclick="openModal('${car._id}')" class="mt-4 w-full bg-brand-green text-white py-2 rounded hover:bg-opacity-90 transition-colors">
+                View Details
+              </button>
+            </div>
+          </div>
+        `;
+      });
     }
-  }
 
-  // Inventory (todos os carros)
-  if (inventoryContainer) {
-    if (cars.length === 0) {
-      showError(inventoryContainer, 'Nenhum veículo disponível no momento.');
-    } else {
+    // Inventory (todos os carros)
+    const inventoryContainer = document.getElementById('carsList');
+    if (inventoryContainer) {
       inventoryContainer.innerHTML = '';
-      renderCars(cars, inventoryContainer, false);
+      cars.forEach(car => {
+        const mainImage = car.images && car.images.length > 0 ? car.images[0] : '/images/no-image.png';
+        inventoryContainer.innerHTML += `
+          <div class="car-card bg-white rounded-lg shadow-lg overflow-hidden">
+            <img src="${mainImage}" alt="${car.brand} ${car.model}" class="w-full h-48 object-cover">
+            <div class="p-4">
+              <h3 class="text-xl font-semibold">${car.brand} ${car.model}</h3>
+              <p class="text-gray-600">${car.year} &bull; ${car.fuelType} &bull; ${car.mileage} mi</p>
+              <p class="text-brand-green font-bold mt-2">${formatPrice(car.cashPrice)}</p>
+              <p class="text-sm text-gray-500">Financed: ${formatPrice(car.financedPrice)}</p>
+              <button onclick="openModal('${car._id}')" class="mt-4 w-full bg-brand-green text-white py-2 rounded hover:bg-opacity-90 transition-colors">
+                View Details
+              </button>
+            </div>
+          </div>
+        `;
+      });
+    }
+  } catch (error) {
+    console.error('Error loading cars:', error);
+    const featuredContainer = document.getElementById('featuredCars');
+    const inventoryContainer = document.getElementById('carsList');
+    if (featuredContainer) {
+      featuredContainer.innerHTML = '<p class="text-center text-red-500">Error loading featured cars. Please try again later.</p>';
+    }
+    if (inventoryContainer) {
+      inventoryContainer.innerHTML = '<p class="text-center text-red-500">Error loading inventory. Please try again later.</p>';
     }
   }
 }
 
-// Função para renderizar carros
-function renderCars(cars, container, isFeatured) {
-  cars.forEach(car => {
-    const mainImage = car.images && car.images.length > 0 ? car.images[0] : '/images/no-image.png';
-    const cash = car.cashPrice !== undefined ? formatPrice(car.cashPrice) : 'N/A';
-    const financed = car.financedPrice !== undefined ? formatPrice(car.financedPrice) : 'N/A';
-    const vin = car.vinNumber || 'N/A';
-    const description = car.description || '';
-    if (isFeatured) {
-      container.innerHTML += `
-        <div class="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col">
-          <div class="relative h-56">
-            <span class="absolute top-4 right-4 bg-brand-green text-white px-4 py-1 rounded-full text-sm font-medium">${car.status === 'available' ? 'Available' : 'Sold'}</span>
-            <img src="${mainImage}" alt="${car.brand} ${car.model}" class="w-full h-full object-cover">
+// Função para abrir o modal com detalhes do carro
+async function openModal(carId) {
+  try {
+    const response = await fetch(`${REMOTE_API_URL}/${carId}`);
+    if (!response.ok) throw new Error('Car not found');
+    const car = await response.json();
+    
+    let imagesHtml = '';
+    if (car.images && car.images.length > 0) {
+      imagesHtml = `
+        <div class="flex flex-col gap-4 md:w-1/2">
+          <div class="w-full">
+            <img src="${car.images[0]}" class="w-full rounded-lg shadow" style="max-height:350px;object-fit:cover;" id="mainModalImg">
           </div>
-          <div class="p-6 flex-1 flex flex-col">
-            <h3 class="font-bold text-xl mb-2">${car.brand} ${car.model}</h3>
-            <div class="flex justify-between mb-4 text-gray-600">
-              <span><i class="fas fa-car-side mr-1"></i> ${car.year}</span>
-              <span><i class="fas fa-tachometer-alt mr-1"></i> ${car.mileage} mi</span>
-              <span><i class="fas fa-gas-pump mr-1"></i> ${car.fuelType}</span>
-            </div>
-            <div class="mb-1">
-              <span class="font-bold text-brand-green">Cash Price:</span>
-              <span class="text-2xl font-bold text-brand-green ml-2">${cash}</span>
-            </div>
-            <div class="mb-1">
-              <span class="font-bold text-gray-500" style="font-size:0.95rem;">Financed Price:</span>
-              <span class="text-base text-gray-500 ml-2" style="font-size:0.95rem;">${financed}</span>
-            </div>
-            <div class="mb-2">
-              <span class="text-xs text-gray-400">VIN: ${vin}</span>
-            </div>
-            <p class="text-gray-600 mb-2">${description}</p>
-            <button onclick="openModal('${car._id}')" class="block text-center bg-brand-green hover:bg-green-600 text-white font-medium py-2 px-4 rounded-md transition duration-300 ease-in-out mt-auto">View Details</button>
+          <div class="flex gap-2 mt-2">
+            ${car.images.map(img => `<img src="${img}" class="h-20 w-28 object-cover rounded cursor-pointer border-2 border-transparent hover:border-brand-green" onclick="document.getElementById('mainModalImg').src='${img}'">`).join('')}
           </div>
         </div>
       `;
     } else {
-      container.innerHTML += `
-        <div class="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col">
-          <div class="relative h-56">
-            <span class="absolute top-4 right-4 bg-brand-green text-white px-4 py-1 rounded-full text-sm font-medium">${car.status === 'available' ? 'Available' : 'Sold'}</span>
-            <img src="${mainImage}" alt="${car.brand} ${car.model}" class="w-full h-full object-cover">
-          </div>
-          <div class="p-6 flex-1 flex flex-col">
-            <h3 class="font-bold text-xl mb-2">${car.brand} ${car.model}</h3>
-            <div class="flex justify-between mb-4 text-gray-600">
-              <span><i class="fas fa-calendar-alt mr-1"></i> ${car.year}</span>
-              <span><i class="fas fa-tachometer-alt mr-1"></i> ${car.mileage} mi</span>
-              <span><i class="fas fa-gas-pump mr-1"></i> ${car.fuelType}</span>
-            </div>
-            <div class="mb-1">
-              <span class="font-bold text-brand-green">Cash Price:</span>
-              <span class="text-2xl font-bold text-brand-green ml-2">${cash}</span>
-            </div>
-            <div class="mb-1">
-              <span class="font-bold text-gray-500" style="font-size:0.95rem;">Financed Price:</span>
-              <span class="text-base text-gray-500 ml-2" style="font-size:0.95rem;">${financed}</span>
-            </div>
-            <div class="mb-2">
-              <span class="text-xs text-gray-400">VIN: ${vin}</span>
-            </div>
-            <p class="text-gray-600 mb-2">${description}</p>
-            <button onclick="openModal('${car._id}')" class="block text-center bg-brand-green hover:bg-green-600 text-white font-medium py-2 px-4 rounded-md transition duration-300 ease-in-out mt-auto">View Details</button>
-          </div>
-        </div>
-      `;
+      imagesHtml = `<div class="md:w-1/2"><img src="/images/no-image.png" class="w-full rounded-lg shadow" style="max-height:350px;object-fit:cover;"></div>`;
     }
-  });
-}
 
-// Modal de detalhes (ajustado para buscar do endpoint correto)
-async function openModal(carId) {
-  let car = null;
-  // Se mock, busca do mock
-  if (carId.startsWith('mock')) {
-    car = MOCK_CARS.find(c => c._id === carId);
-  } else {
-    // Se WordPress, sempre busca do REMOTE
-    let url = (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1')
-      ? `${REMOTE_API_URL}/${carId}`
-      : `${REMOTE_API_URL}/${carId}`;
-    try {
-      let response = await fetch(url);
-      if (!response.ok) throw new Error('API local não respondeu');
-      car = await response.json();
-    } catch (e1) {
-      try {
-        let response = await fetch(`${REMOTE_API_URL}/${carId}`);
-        if (!response.ok) throw new Error('API remota não respondeu');
-        car = await response.json();
-      } catch (e2) {
-        alert('Não foi possível carregar os detalhes do veículo. Por favor, tente novamente mais tarde.');
-        return;
-      }
-    }
-  }
-  let imagesHtml = '';
-  if (car.images && car.images.length > 0) {
-    imagesHtml = `
-      <div class="flex flex-col gap-4 md:w-1/2">
-        <div class="w-full">
-          <img src="${car.images[0]}" class="w-full rounded-lg shadow" style="max-height:350px;object-fit:cover;" id="mainModalImg">
-        </div>
-        <div class="flex gap-2 mt-2">
-          ${car.images.map(img => `<img src="${img}" class="h-20 w-28 object-cover rounded cursor-pointer border-2 border-transparent hover:border-brand-green" onclick="document.getElementById('mainModalImg').src='${img}'">`).join('')}
+    let detailsHtml = `
+      <div class="flex-1 flex flex-col justify-between">
+        <div>
+          <h2 class="text-3xl font-bold mb-2">${car.brand} ${car.model}</h2>
+          <p class="text-lg text-gray-600 mb-4">${car.year} &bull; ${car.fuelType} &bull; ${car.mileage} mi</p>
+          <div class="mb-2">
+            <span class="text-2xl font-bold text-brand-green">${formatPrice(car.cashPrice)}</span>
+          </div>
+          <div class="mb-4">
+            <span class="text-sm text-gray-500">Financed: ${formatPrice(car.financedPrice)}</span>
+            <span class="ml-2 text-gray-500">${car.status === 'available' ? 'Available' : 'Sold'}</span>
+          </div>
+          <p class="mb-4">${car.description || ''}</p>
+          <a href="https://wa.me/19733938674?text=Hello! I'm interested in the ${encodeURIComponent(car.brand + ' ' + car.model)} I saw on your website." target="_blank" rel="noopener" class="inline-block mt-4 bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-md shadow transition">
+            <i class="fab fa-whatsapp mr-2"></i> Contact on WhatsApp
+          </a>
         </div>
       </div>
     `;
-  } else {
-    imagesHtml = `<div class="md:w-1/2"><img src="/images/no-image.png" class="w-full rounded-lg shadow" style="max-height:350px;object-fit:cover;"></div>`;
+    document.getElementById('modalContent').innerHTML = `<div class="flex flex-col md:flex-row gap-8">${imagesHtml}${detailsHtml}</div>`;
+    document.getElementById('carModal').classList.remove('hidden');
+  } catch (error) {
+    console.error('Error loading car details:', error);
+    alert('Error loading car details. Please try again later.');
   }
-  let detailsHtml = `
-    <div class="flex-1 flex flex-col justify-between">
-      <div>
-        <h2 class="text-3xl font-bold mb-2">${car.brand} ${car.model}</h2>
-        <p class="text-lg text-gray-600 mb-4">${car.year} &bull; ${car.fuelType} &bull; ${car.mileage} mi</p>
-        <div class="mb-4">
-          <span class="text-2xl font-bold text-brand-green">${formatPrice(car.price)}</span>
-          <span class="ml-2 text-gray-500">${car.status === 'available' ? 'Available' : 'Sold'}</span>
-        </div>
-        <p class="mb-4">${car.description || ''}</p>
-        <a href="https://wa.me/19733938674?text=Hello! I'm interested in the ${encodeURIComponent(car.brand + ' ' + car.model)} I saw on your website." target="_blank" rel="noopener" class="inline-block mt-4 bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-md shadow transition">
-          <i class="fab fa-whatsapp mr-2"></i> Contact on WhatsApp
-        </a>
-      </div>
-    </div>
-  `;
-  document.getElementById('modalContent').innerHTML = `<div class="flex flex-col md:flex-row gap-8">${imagesHtml}${detailsHtml}</div>`;
-  document.getElementById('carModal').classList.remove('hidden');
 }
 
 function closeModal() {
