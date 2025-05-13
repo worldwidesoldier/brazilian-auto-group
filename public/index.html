@@ -305,25 +305,18 @@
       <h2 class="text-3xl font-bold mb-2 text-primary-dark text-center">Contact Our Team</h2>
       <p class="text-gray-600 text-center mb-8">Have questions? Ready to see a vehicle? Get in touch with our friendly team today.</p>
       <form id="contactForm" class="space-y-6 bg-white p-8 rounded-2xl shadow-lg border border-primary-dark">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 gap-6">
           <div>
             <label class="block mb-2 text-sm font-medium text-primary-dark">Name</label>
             <input type="text" name="name" required class="w-full px-4 py-3 rounded-md bg-gray-50 text-gray-800 border-2 border-primary-dark focus:outline-none focus:ring-2 focus:ring-primary-green focus:border-primary-green" placeholder="Your Name">
-          </div>
-          <div>
-            <label class="block mb-2 text-sm font-medium text-primary-dark">Email</label>
-            <input type="email" name="email" required class="w-full px-4 py-3 rounded-md bg-gray-50 text-gray-800 border-2 border-primary-dark focus:outline-none focus:ring-2 focus:ring-primary-green focus:border-primary-green" placeholder="Your Email">
           </div>
         </div>
         <div>
           <label class="block mb-2 text-sm font-medium text-primary-dark">Message</label>
           <textarea name="message" rows="4" required class="w-full px-4 py-3 rounded-md bg-gray-50 text-gray-800 border-2 border-primary-dark focus:outline-none focus:ring-2 focus:ring-primary-green focus:border-primary-green" placeholder="How can we help you?"></textarea>
         </div>
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mt-6">
+        <div class="flex justify-center mt-6">
           <button type="submit" class="w-full md:w-auto bg-brand-green hover:bg-green-700 text-white font-bold py-3 px-8 rounded-md shadow transition text-lg">Send Message</button>
-          <a href="https://wa.me/19733938674" target="_blank" class="w-full md:w-auto flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-md shadow transition text-lg">
-            <i class="fab fa-whatsapp text-2xl"></i> WhatsApp
-          </a>
         </div>
       </form>
     </div>
@@ -620,10 +613,9 @@ if (contactForm) {
     e.preventDefault();
     const formData = new FormData(contactForm);
     const name = formData.get('name');
-    const email = formData.get('email');
     const message = formData.get('message');
     const text =
-      `Name: ${name}%0AEmail: ${email}%0AMessage: ${encodeURIComponent(message)}`;
+      `Name: ${name}%0AMessage: ${encodeURIComponent(message)}`;
     const phone = '19733938674';
     window.open(`https://wa.me/${phone}?text=${text}`, '_blank');
   });
