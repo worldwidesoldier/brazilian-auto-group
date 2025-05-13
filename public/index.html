@@ -441,13 +441,9 @@ function showError(container, message) {
 
 // SEMPRE usar mock localmente
 async function fetchCars() {
-  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-    return MOCK_CARS;
-  }
-  // Se for produção/WordPress, tenta buscar do backend
   try {
     const response = await fetch(REMOTE_API_URL);
-    if (!response.ok) throw new Error('API remota não respondeu');
+    if (!response.ok) throw new Error('API não respondeu');
     return await response.json();
   } catch (e) {
     return MOCK_CARS;
@@ -498,6 +494,7 @@ function renderCars(cars, container, isFeatured) {
     const cash = car.cashPrice !== undefined ? formatPrice(car.cashPrice) : 'N/A';
     const financed = car.financedPrice !== undefined ? formatPrice(car.financedPrice) : 'N/A';
     const vin = car.vinNumber || 'N/A';
+    const description = car.description || '';
     if (isFeatured) {
       container.innerHTML += `
         <div class="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col">
@@ -512,15 +509,15 @@ function renderCars(cars, container, isFeatured) {
               <span><i class="fas fa-tachometer-alt mr-1"></i> ${car.mileage} mi</span>
               <span><i class="fas fa-gas-pump mr-1"></i> ${car.fuelType}</span>
             </div>
-            <div class="mb-2">
+            <div class="flex items-center space-x-2 mb-2">
+              <span class="font-bold text-brand-green">Cash Price:</span>
               <span class="text-2xl font-bold text-brand-green">${cash}</span>
-            </div>
-            <div class="mb-2">
               <span class="text-sm text-gray-500">Financed: ${financed}</span>
             </div>
             <div class="mb-2">
               <span class="text-xs text-gray-400">VIN: ${vin}</span>
             </div>
+            <p class="text-gray-600 mb-2">${description}</p>
             <button onclick="openModal('${car._id}')" class="block text-center bg-brand-green hover:bg-green-600 text-white font-medium py-2 px-4 rounded-md transition duration-300 ease-in-out mt-auto">View Details</button>
           </div>
         </div>
@@ -539,15 +536,15 @@ function renderCars(cars, container, isFeatured) {
               <span><i class="fas fa-tachometer-alt mr-1"></i> ${car.mileage} mi</span>
               <span><i class="fas fa-gas-pump mr-1"></i> ${car.fuelType}</span>
             </div>
-            <div class="mb-2">
+            <div class="flex items-center space-x-2 mb-2">
+              <span class="font-bold text-brand-green">Cash Price:</span>
               <span class="text-2xl font-bold text-brand-green">${cash}</span>
-            </div>
-            <div class="mb-2">
               <span class="text-sm text-gray-500">Financed: ${financed}</span>
             </div>
             <div class="mb-2">
               <span class="text-xs text-gray-400">VIN: ${vin}</span>
             </div>
+            <p class="text-gray-600 mb-2">${description}</p>
             <button onclick="openModal('${car._id}')" class="block text-center bg-brand-green hover:bg-green-600 text-white font-medium py-2 px-4 rounded-md transition duration-300 ease-in-out mt-auto">View Details</button>
           </div>
         </div>
