@@ -8,6 +8,14 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    html, body {
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+    header {
+      margin-top: 0 !important;
+      padding-top: 0 !important;
+    }
     .bg-brand-dark { background-color: #0a2713; }
     .bg-brand-green { background-color: #4CAF50; }
     .text-brand-green { color: #4CAF50; }
@@ -323,19 +331,19 @@
   </section>
 
   <!-- VIDEO ON DEMAND SECTION -->
-  <section class="py-16 bg-gray-50" id="video-demand">
+  <section class="py-16 bg-brand-green" id="video-demand">
     <div class="container mx-auto px-4 max-w-3xl text-center">
-      <h2 class="text-3xl font-bold mb-4 text-primary-dark">Quer ouvir o motor do carro?</h2>
-      <p class="text-lg text-gray-700 mb-6">Se você quiser um vídeo do motor funcionando para escutar o barulho, peça um vídeo exclusivo via WhatsApp! Nosso time envia para você na hora, sem compromisso.</p>
+      <h2 class="text-3xl font-bold mb-4 text-white">Want to hear the engine?</h2>
+      <p class="text-lg text-white mb-6">If you want a video of the engine running so you can hear the sound, just request an exclusive video via WhatsApp! Our team will send it to you on demand, no commitment needed.</p>
       <div class="flex justify-center mb-6">
-        <!-- Exemplo de vídeo, substitua o src pelo seu vídeo real -->
+        <!-- Example video, replace src with your real video -->
         <video controls class="rounded-lg shadow-lg w-full max-w-md">
           <source src="/videos/exemplo-motor.mp4" type="video/mp4">
-          Seu navegador não suporta vídeo.
+          Your browser does not support the video tag.
         </video>
       </div>
-      <a href="https://wa.me/19733938674?text=Olá! Gostaria de receber um vídeo do motor funcionando." target="_blank" class="inline-block bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-md shadow transition text-lg">
-        Pedir vídeo via WhatsApp
+      <a href="https://wa.me/19733938674?text=Hi! I would like to receive a video of the engine running." target="_blank" class="inline-block bg-white hover:bg-gray-100 text-brand-green font-bold py-3 px-8 rounded-md shadow transition text-lg">
+        Request video via WhatsApp
         <i class="fab fa-whatsapp ml-2"></i>
       </a>
     </div>
