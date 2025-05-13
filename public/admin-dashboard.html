@@ -91,6 +91,28 @@
                             .filepond--panel-root {
                                 min-height: 50px;
                             }
+                            .filepond--item {
+                                min-height: 32px !important;
+                                max-height: 32px !important;
+                                height: 32px !important;
+                                margin-bottom: 2px;
+                            }
+                            .filepond--file {
+                                min-height: 32px !important;
+                                max-height: 32px !important;
+                                height: 32px !important;
+                            }
+                            .filepond--file-info {
+                                font-size: 0.9rem;
+                                padding: 0 4px;
+                            }
+                            .filepond--file-poster {
+                                display: none !important;
+                            }
+                            .filepond--file-action-button {
+                                top: 2px !important;
+                                right: 2px !important;
+                            }
                         </style>
                     </div>
                     <div>
@@ -446,12 +468,18 @@
                     acceptedFileTypes: ['image/*'],
                     maxFileSize: '5MB',
                     labelIdle: 'Arraste as fotos ou <span class="filepond--label-action">clique para selecionar</span> (máx 5)',
-                    imagePreviewHeight: 60,
-                    stylePanelAspectRatio: 1.5,
-                    allowImagePreview: false, // Desabilita preview de imagem
-                    allowFilePoster: false, // Desabilita poster
+                    allowImagePreview: false,
+                    allowFilePoster: false,
                     allowFileTypeValidation: true,
-                    allowFileSizeValidation: true
+                    allowFileSizeValidation: true,
+                    itemInsertLocation: 'after',
+                    styleItemPanelAspectRatio: 0.2,
+                    styleItemPanelRemoveItemPosition: 'right',
+                    styleButtonRemoveItemPosition: 'right',
+                    styleLoadIndicatorPosition: 'center',
+                    styleProgressIndicatorPosition: 'right',
+                    styleButtonProcessItemPosition: 'right',
+                    stylePanelLayout: 'compact',
                 });
             }
         });
