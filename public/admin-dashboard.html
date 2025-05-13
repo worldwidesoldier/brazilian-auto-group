@@ -73,19 +73,7 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Car Photos</label>
-                        <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
-                            <div class="space-y-1 text-center">
-                                <div class="flex text-sm text-gray-600">
-                                    <label for="images" class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
-                                        <span>Upload photos</span>
-                                        <input id="images" name="images" type="file" accept="image/*" multiple class="sr-only" required>
-                                    </label>
-                                    <p class="pl-1">or drag and drop</p>
-                                </div>
-                                <p class="text-xs text-gray-500">PNG, JPG, WEBP up to 5MB each (max 5 photos)</p>
-                            </div>
-                        </div>
-                        <div id="imagePreview" class="mt-4 grid grid-cols-5 gap-4"></div>
+                        <input id="images" name="images" type="file" accept="image/*" multiple required>
                     </div>
                     <div>
                         <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
@@ -205,44 +193,6 @@
                 style: 'currency',
                 currency: 'USD'
             }).format(num);
-        }
-
-        // Preview images before upload (multiple images)
-        let addCarImages = [];
-        const imagesInput = document.getElementById('images');
-        const imagePreview = document.getElementById('imagePreview');
-
-        imagesInput.addEventListener('change', function() {
-            addCarImages = Array.from(this.files).slice(0, 5); // Limite de 5 imagens
-            renderImagePreview();
-        });
-
-        function renderImagePreview() {
-            imagePreview.innerHTML = '';
-            addCarImages.forEach((file, index) => {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const div = document.createElement('div');
-                    div.className = 'relative';
-                    div.innerHTML = `
-                        <img src="${e.target.result}" class="w-full h-32 object-cover rounded">
-                        <button type="button" class="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600" onclick="removeAddCarImage(${index})">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    `;
-                    imagePreview.appendChild(div);
-                }
-                reader.readAsDataURL(file);
-            });
-        }
-
-        window.removeAddCarImage = function(index) {
-            addCarImages.splice(index, 1);
-            renderImagePreview();
-            // Atualiza o input de arquivos
-            const dt = new DataTransfer();
-            addCarImages.forEach(file => dt.items.add(file));
-            imagesInput.files = dt.files;
         }
 
         // Load cars
