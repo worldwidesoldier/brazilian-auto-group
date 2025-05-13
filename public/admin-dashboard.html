@@ -246,9 +246,13 @@
         document.getElementById('addCarForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const formData = new FormData(e.target);
-            // Remove imagens do formData e adiciona as do array
+            // Remove imagens do formData e adiciona as do FilePond
             formData.delete('images');
-            addCarImages.forEach(file => formData.append('images', file));
+            if (pond) {
+                pond.getFiles().forEach(fileItem => {
+                    formData.append('images', fileItem.file);
+                });
+            }
 
             try {
                 const response = await fetch('/api/cars', {
@@ -258,8 +262,7 @@
 
                 if (response.ok) {
                     e.target.reset();
-                    addCarImages = [];
-                    imagePreview.innerHTML = '';
+                    if (pond) pond.removeFiles();
                     loadCars();
                     alert('Car added successfully!');
                 } else {
@@ -417,8 +420,9 @@
                 FilePondPluginFileValidateSize
             );
             const imagesInput = document.querySelector('input[name="images"]');
+            let pond = null;
             if (imagesInput) {
-                FilePond.create(imagesInput, {
+                pond = FilePond.create(imagesInput, {
                     allowMultiple: true,
                     maxFiles: 5,
                     acceptedFileTypes: ['image/*'],
@@ -426,10 +430,8 @@
                     labelIdle: 'Arraste as fotos ou <span class="filepond--label-action">clique para selecionar</span> (máx 5)',
                     imagePreviewHeight: 120,
                     stylePanelAspectRatio: 1.5,
-                    styleLoadIndicatorPosition: 'center bottom',
-                    styleProgressIndicatorPosition: 'right bottom',
-                    styleButtonRemoveItemPosition: 'left bottom',
-                    styleButtonProcessItemPosition: 'right bottom'
+                    // Desabilita o lightbox de preview
+                    imagePreviewMarkupShow: false
                 });
             }
         });
