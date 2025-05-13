@@ -1,197 +1,636 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Brazilian Auto Group - Independent Dealer</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'primary': '#1B4332',    // Dark green
-                        'secondary': '#40916C',  // Light green
-                        'accent': '#2D6A4F',     // Medium green
-                    },
-                    fontFamily: {
-                        'sans': ['Inter', 'sans-serif'],
-                    },
-                }
-            }
-        }
-    </script>
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Brazilian Auto Group</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    .bg-brand-dark { background-color: #0a2713; }
+    .bg-brand-green { background-color: #4CAF50; }
+    .text-brand-green { color: #4CAF50; }
+    .border-brand-green { border-color: #4CAF50; }
+    .modal-bg { background: rgba(0,0,0,0.7); }
+    .modal { z-index: 1000; }
+    body { font-family: 'Montserrat', sans-serif; }
+    .car-card { transition: all 0.3s ease; }
+    .car-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+    .status-available { background-color: #76c043; color: white; }
+    .status-sold { background-color: #dc3545; color: white; }
+    .btn-primary-green { background-color: #76c043; color: white; transition: all 0.3s ease; }
+    .btn-primary-green:hover { background-color: #9dd874; transform: translateY(-2px); }
+    .text-primary-green { color: #76c043 !important; }
+    .border-primary-dark { border-color: #0a2713 !important; }
+    @media (max-width: 768px) {
+      .car-card { min-width: 100%; }
+      .hero-content { text-align: center; align-items: center; }
+      .hero-buttons { flex-direction: column; gap: 1rem; }
+      .header-menu { display: none; }
+      .header-mobile { display: flex !important; }
+    }
+  </style>
 </head>
-<body class="bg-gray-50">
-    <!-- Navigation -->
-    <nav class="bg-white shadow-lg fixed w-full z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex items-center">
-                    <a href="/" class="flex items-center">
-                        <svg class="h-8 w-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"></path>
-                        </svg>
-                        <span class="ml-2 text-xl font-bold text-primary">Brazilian Auto Group</span>
-                    </a>
-                </div>
-                <div class="hidden md:flex items-center space-x-8">
-                    <a href="/" class="text-gray-700 hover:text-primary">Home</a>
-                    <a href="/cars.html" class="text-gray-700 hover:text-primary">Cars</a>
-                    <a href="/about.html" class="text-gray-700 hover:text-primary">About</a>
-                    <a href="/contact.html" class="text-gray-700 hover:text-primary">Contact</a>
-                </div>
-                <div class="md:hidden flex items-center">
-                    <button class="mobile-menu-button">
-                        <svg class="h-6 w-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-        </div>
+<body class="bg-gray-100 text-gray-800">
+
+  <!-- HEADER -->
+  <header class="shadow-lg" style="background-color: #0a2713;">
+    <nav class="container mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-2">
+        <img src="https://page1.genspark.site/v1/base64_upload/d31efdedb1232115fd6ffa6c27cb9e5b" alt="Brazilian Auto Group Logo" class="h-16">
+      </div>
+      <div class="hidden md:flex space-x-10 header-menu">
+        <a href="#inventory" class="nav-link text-white font-medium hover:text-primary-green transition-colors">Inventory</a>
+        <a href="#financing" class="nav-link text-white font-medium hover:text-primary-green transition-colors">Financing</a>
+        <a href="#about" class="nav-link text-white font-medium hover:text-primary-green transition-colors">About Us</a>
+        <a href="#testimonials" class="nav-link text-white font-medium hover:text-primary-green transition-colors">Testimonials</a>
+        <a href="#contact" class="nav-link text-white font-medium hover:text-primary-green transition-colors">Contact</a>
+      </div>
+      <div class="flex items-center space-x-4">
+        <a href="tel:+19733938674" class="text-white hover:text-primary-green transition-colors">
+          <i class="fas fa-phone mr-2"></i>
+          <span class="hidden md:inline">(973) 393-8674</span>
+        </a>
+        <a href="#contact" 
+          style="color:#0a2713; border:2px solid #0a2713; background:#fff; font-family: 'Montserrat', sans-serif; padding:0.5rem 2rem; border-radius:0.375rem; font-weight:500; box-shadow:0 2px 8px rgba(0,0,0,0.08); transition:background 0.2s;"
+          onmouseover="this.style.background='#f3f4f6'" 
+          onmouseout="this.style.background='#fff'">
+          Contact Us
+        </a>
+      </div>
+      <button class="md:hidden text-white focus:outline-none header-mobile" style="display:none;">
+        <i class="fas fa-bars text-xl"></i>
+      </button>
     </nav>
+  </header>
 
-    <!-- Hero Section -->
-    <section class="pt-24 pb-12 bg-gradient-to-r from-primary to-secondary">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center">
-                <h1 class="text-4xl tracking-tight font-extrabold text-white sm:text-5xl md:text-6xl">
-                    <span class="block">Premium Cars</span>
-                    <span class="block text-secondary-200">Rent & Buy</span>
-                </h1>
-                <p class="mt-3 max-w-md mx-auto text-base text-white sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
-                    Your trusted independent dealer in New Jersey. Experience personalized service and premium vehicles.
-                </p>
-                <div class="mt-5 max-w-md mx-auto sm:flex sm:justify-center md:mt-8">
-                    <div class="rounded-md shadow">
-                        <a href="/cars.html" class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-primary bg-white hover:bg-gray-50 md:py-4 md:text-lg md:px-10">
-                            View Inventory
-                        </a>
-                    </div>
-                    <div class="mt-3 rounded-md shadow sm:mt-0 sm:ml-3">
-                        <a href="https://wa.me/19733938674" class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-secondary hover:bg-secondary-600 md:py-4 md:text-lg md:px-10">
-                            Contact Us
-                        </a>
-                    </div>
-                </div>
-            </div>
+  <!-- HERO -->
+  <section class="py-20 text-white relative overflow-hidden" style="background: linear-gradient(120deg, #0a2e1a 60%, #76c043 100%);">
+    <!-- Cars & Road Animation Background -->
+    <div class="car-animation" style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:1;opacity:0.18;pointer-events:none;">
+      <div class="car car1"></div>
+      <div class="car car2"></div>
+      <div class="car car3"></div>
+      <div class="road">
+        <div class="line" style="left: 0%;"></div>
+        <div class="line" style="left: 10%;"></div>
+        <div class="line" style="left: 20%;"></div>
+        <div class="line" style="left: 30%;"></div>
+        <div class="line" style="left: 40%;"></div>
+        <div class="line" style="left: 50%;"></div>
+        <div class="line" style="left: 60%;"></div>
+        <div class="line" style="left: 70%;"></div>
+        <div class="line" style="left: 80%;"></div>
+        <div class="line" style="left: 90%;"></div>
+        <div class="line" style="left: 100%;"></div>
+      </div>
+    </div>
+    <style>
+      .car-animation .car {
+        position: absolute;
+        bottom: 30px;
+        width: 120px;
+        height: 40px;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        opacity: 0.6;
+        animation: driveCar 15s linear infinite;
+      }
+      .car-animation .car1 {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23ffffff' viewBox='0 0 24 24'%3E%3Cpath d='M5 13a2 2 0 0 1-2-2c0-1.1.9-2 2-2a2 2 0 0 1 2 2c0 1.1-.9 2-2 2zm14 0a2 2 0 0 1-2-2c0-1.1.9-2 2-2a2 2 0 0 1 2 2c0 1.1-.9 2-2 2zm-7-3.4L9 11.5V12h6v-.5l-3-1.9zM12 1C8.14 1 5 4.14 5 8v1h2V8c0-2.76 2.24-5 5-5s5 2.24 5 5v1h2V8c0-3.86-3.14-7-7-7zm.5 14.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S10.17 13 11 13s1.5.67 1.5 1.5zm7.5-1.5H4v6h16v-6z'/%3E%3C/svg%3E");
+        animation-delay: 0s;
+      }
+      .car-animation .car2 {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23ffffff' viewBox='0 0 24 24'%3E%3Cpath d='M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z'/%3E%3C/svg%3E");
+        animation-delay: -7s;
+      }
+      .car-animation .car3 {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23ffffff' viewBox='0 0 24 24'%3E%3Cpath d='M16 6l3 4h2c1.11 0 2 .89 2 2v3h-2c0 1.66-1.34 3-3 3s-3-1.34-3-3H9c0 1.66-1.34 3-3 3s-3-1.34-3-3H1v-3c0-1.11.89-2 2-2l3-4h10zm-10.5 1.5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5zM18 13.5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5-.67-1.5-1.5-1.5zm-12 0c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5-.67-1.5-1.5-1.5z'/%3E%3C/svg%3E");
+        animation-delay: -3.5s;
+      }
+      @keyframes driveCar {
+        0% { transform: translateX(-150px); }
+        100% { transform: translateX(calc(100% + 150px)); }
+      }
+      .car-animation .road {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 60px;
+        background: rgba(255,255,255,0.05);
+      }
+      .car-animation .line {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        height: 5px;
+        width: 50px;
+        background: rgba(255,255,255,0.2);
+        animation: moveLine 1s linear infinite;
+      }
+      @keyframes moveLine {
+        0% { transform: translateY(-50%) translateX(0); }
+        100% { transform: translateY(-50%) translateX(-100px); }
+      }
+    </style>
+    <!-- Fim do background animado -->
+    <div class="container mx-auto px-4 flex flex-col md:flex-row items-center hero-content relative z-10">
+      <div class="max-w-3xl md:w-1/2">
+        <h1 class="text-4xl md:text-5xl font-bold mb-6">Find Your Perfect Car with Easy Financing Options</h1>
+        <p class="text-xl mb-8 opacity-90">Quality used cars with small down payments and in-house financing. Weekly payment plans available.</p>
+        <div class="flex flex-wrap gap-4 hero-buttons">
+          <a href="#inventory" class="bg-primary-green text-white px-8 py-3 rounded-md font-medium shadow-lg text-lg border-2 border-primary-green">
+            Browse Inventory
+          </a>
+          <a href="#contact" class="bg-transparent text-primary-dark border-2 border-primary-dark px-8 py-3 rounded-md font-medium shadow-lg text-lg">
+            Contact Us
+          </a>
         </div>
-    </section>
+      </div>
+      <div class="md:w-1/2 mt-10 md:mt-0 flex justify-center">
+        <!-- Espaço para imagem ou ilustração, se quiser adicionar depois -->
+      </div>
+    </div>
+  </section>
 
-    <!-- Featured Cars Section -->
-    <section class="py-12 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-3xl font-extrabold text-gray-900 text-center mb-8">Featured Vehicles</h2>
-            <div id="featured-cars" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Cars will be loaded dynamically via JavaScript -->
-            </div>
+  <!-- FEATURED VEHICLES -->
+  <section id="featured" class="py-16 bg-white">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-12">Featured Vehicles</h2>
+      <div id="featuredCars" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+    </div>
+  </section>
+
+  <!-- WHY CHOOSE -->
+  <section id="why" class="py-16 bg-brand-dark text-white">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-12">Why Choose Brazilian Auto Group?</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+        <div>
+          <div class="text-brand-green text-4xl mb-4"><i class="fas fa-car"></i></div>
+          <h3 class="text-xl font-bold mb-3">Quality Vehicles</h3>
+          <p>All our vehicles undergo a thorough professional inspection to ensure quality and reliability before being offered for sale.</p>
         </div>
-    </section>
-
-    <!-- Why Choose Us Section -->
-    <section class="py-12 bg-gray-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-3xl font-extrabold text-gray-900 text-center mb-8">Why Choose Brazilian Auto Group?</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="text-center">
-                    <div class="bg-white p-6 rounded-lg shadow-lg">
-                        <svg class="h-12 w-12 text-primary mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        <h3 class="mt-4 text-xl font-semibold text-gray-900">Personalized Service</h3>
-                        <p class="mt-2 text-gray-600">Direct attention and customized solutions for your needs.</p>
-                    </div>
-                </div>
-                <div class="text-center">
-                    <div class="bg-white p-6 rounded-lg shadow-lg">
-                        <svg class="h-12 w-12 text-primary mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-                        </svg>
-                        <h3 class="mt-4 text-xl font-semibold text-gray-900">Trust & Reliability</h3>
-                        <p class="mt-2 text-gray-600">Independent dealer with transparent and honest service.</p>
-                    </div>
-                </div>
-                <div class="text-center">
-                    <div class="bg-white p-6 rounded-lg shadow-lg">
-                        <svg class="h-12 w-12 text-primary mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                        </svg>
-                        <h3 class="mt-4 text-xl font-semibold text-gray-900">Premium Selection</h3>
-                        <p class="mt-2 text-gray-600">Carefully selected vehicles for rent and purchase.</p>
-                    </div>
-                </div>
-            </div>
+        <div>
+          <div class="text-brand-green text-4xl mb-4"><i class="fas fa-dollar-sign"></i></div>
+          <h3 class="text-xl font-bold mb-3">Flexible Financing</h3>
+          <p>No credit? No problem. We offer easy financing options tailored to immigrants with little or no credit history.</p>
         </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="bg-primary text-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div>
-                    <h3 class="text-xl font-bold mb-4">Brazilian Auto Group</h3>
-                    <p class="text-gray-300">Independent Dealer</p>
-                </div>
-                <div>
-                    <h3 class="text-xl font-bold mb-4">Contact</h3>
-                    <p class="text-gray-300">Phone: +1 (973) 393-8674</p>
-                    <a href="https://wa.me/19733938674" class="text-gray-300 hover:text-white">WhatsApp</a>
-                </div>
-                <div>
-                    <h3 class="text-xl font-bold mb-4">Location</h3>
-                    <p class="text-gray-300">New Jersey, USA</p>
-                </div>
-            </div>
-            <div class="mt-8 pt-8 border-t border-gray-700 text-center text-gray-300">
-                <p>&copy; 2024 Brazilian Auto Group. All rights reserved.</p>
-            </div>
+        <div>
+          <div class="text-brand-green text-4xl mb-4"><i class="fas fa-handshake"></i></div>
+          <h3 class="text-xl font-bold mb-3">Customer Service</h3>
+          <p>Our multilingual staff provides personalized attention to help you find the perfect vehicle for your needs and budget.</p>
         </div>
-    </footer>
+      </div>
+    </div>
+  </section>
 
-    <script>
-        // Mobile menu toggle
-        document.querySelector('.mobile-menu-button').addEventListener('click', function() {
-            // Add mobile menu functionality here
-        });
+  <!-- FINANCING OPTIONS (EXACT STYLE) -->
+  <section id="financing" class="py-16" style="background:#f7f8fa;">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-2">Financing Options</h2>
+      <p class="text-gray-500 text-center mb-12 text-lg">Easy approvals with flexible payment options</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <!-- In-House Financing -->
+        <div class="bg-white rounded-xl shadow p-8 flex flex-col justify-between">
+          <h3 class="text-xl font-bold mb-4">In-House Financing</h3>
+          <ul class="space-y-4 mb-8">
+            <li class="flex items-start"><i class="fas fa-check-circle text-primary-green mt-1 mr-3"></i>No credit check required - we finance everyone!</li>
+            <li class="flex items-start"><i class="fas fa-check-circle text-primary-green mt-1 mr-3"></i>Small down payment options starting from $500</li>
+            <li class="flex items-start"><i class="fas fa-check-circle text-primary-green mt-1 mr-3"></i>Weekly, bi-weekly or monthly payment plans</li>
+            <li class="flex items-start"><i class="fas fa-check-circle text-primary-green mt-1 mr-3"></i>Flexible terms up to 48 months</li>
+            <li class="flex items-start"><i class="fas fa-check-circle text-primary-green mt-1 mr-3"></i>Build credit history with on-time payments</li>
+          </ul>
+          <a href="#contact" style="background:#76c043;color:#fff;padding:0.75rem 2rem;border-radius:0.75rem;font-weight:500;box-shadow:0 2px 8px rgba(0,0,0,0.08);display:inline-block;" class="w-max">Apply Now</a>
+        </div>
+        <!-- What You'll Need -->
+        <div class="bg-white rounded-xl shadow p-8 flex flex-col justify-between">
+          <h3 class="text-xl font-bold mb-4">What You'll Need</h3>
+          <ul class="space-y-4 mb-8">
+            <li class="flex items-start"><i class="fas fa-id-card text-primary-green mt-1 mr-3"></i>Valid photo ID (driver's license, passport, or other government ID)</li>
+            <li class="flex items-start"><i class="fas fa-file-invoice-dollar text-primary-green mt-1 mr-3"></i>Proof of income (pay stubs, bank statements, tax returns)</li>
+            <li class="flex items-start"><i class="fas fa-home text-primary-green mt-1 mr-3"></i>Proof of residence (utility bill, lease agreement, bank statement)</li>
+            <li class="flex items-start"><i class="fas fa-phone text-primary-green mt-1 mr-3"></i>Personal references (names and contact information)</li>
+            <li class="flex items-start"><i class="fas fa-dollar-sign text-primary-green mt-1 mr-3"></i>Down payment (amount varies based on vehicle)</li>
+          </ul>
+          <p class="text-sm text-gray-400 italic">We work with various documentation situations. Contact us to discuss your specific case.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-        // Fetch featured cars
-        async function loadFeaturedCars() {
-            try {
-                const response = await fetch('/api/cars/featured');
-                const cars = await response.json();
-                const carsContainer = document.getElementById('featured-cars');
-                
-                cars.forEach(car => {
-                    const carCard = `
-                        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-                            <img src="${car.image}" alt="${car.name}" class="w-full h-48 object-cover">
-                            <div class="p-4">
-                                <h3 class="text-xl font-semibold text-gray-900">${car.name}</h3>
-                                <p class="text-primary font-bold mt-2">$${car.price}</p>
-                                <div class="mt-4 flex justify-between items-center">
-                                    <span class="text-gray-600">${car.year}</span>
-                                    <a href="/car-details.html?id=${car.id}" class="text-primary hover:text-secondary">View Details</a>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                    carsContainer.innerHTML += carCard;
-                });
-            } catch (error) {
-                console.error('Error loading featured cars:', error);
-            }
-        }
+  <!-- INVENTORY -->
+  <section id="inventory" class="py-16 bg-gray-100">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-12">Our Inventory</h2>
+      <div id="carsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+    </div>
+  </section>
 
-        // Load featured cars when the page loads
-        document.addEventListener('DOMContentLoaded', loadFeaturedCars);
-    </script>
+  <!-- MODAL DE DETALHES -->
+  <div id="carModal" class="fixed inset-0 modal-bg flex items-center justify-center hidden">
+    <div class="modal bg-white rounded-lg shadow-lg max-w-3xl w-full p-8 relative">
+      <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-500 hover:text-red-600 text-2xl"><i class="fas fa-times"></i></button>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <!-- FAQ Section -->
+  <section class="py-16" id="faq">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold mb-2 text-primary-dark text-center">Frequently Asked Questions</h2>
+      <p class="text-gray-600 text-center mb-12">Answers to common questions about buying a car with us</p>
+      <div class="max-w-3xl mx-auto space-y-6">
+        <div class="bg-white p-6 rounded-lg shadow-custom faq-item">
+          <div class="flex justify-between items-center cursor-pointer faq-question">
+            <h3 class="font-bold text-lg text-primary-dark">What documents do I need to buy a car?</h3>
+            <i class="fas fa-chevron-down text-primary-green"></i>
+          </div>
+          <div class="mt-4 text-gray-600 faq-answer" style="display:none;">
+            <p>To purchase a car at Brazilian Auto Group, you'll typically need a valid photo ID (driver's license, passport, or government ID), proof of income, proof of residence, and a down payment. We work with various documentation situations, so please contact us to discuss your specific circumstances.</p>
+          </div>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-custom faq-item">
+          <div class="flex justify-between items-center cursor-pointer faq-question">
+            <h3 class="font-bold text-lg text-primary-dark">Do you check credit scores?</h3>
+            <i class="fas fa-chevron-down text-primary-green"></i>
+          </div>
+          <div class="mt-4 text-gray-600 faq-answer" style="display:none;">
+            <p>No, our in-house financing program does not require traditional credit checks. We understand that many immigrants and newcomers don't have established credit in the US, so we base our financing decisions on your current income and ability to make payments.</p>
+          </div>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-custom faq-item">
+          <div class="flex justify-between items-center cursor-pointer faq-question">
+            <h3 class="font-bold text-lg text-primary-dark">How much down payment do I need?</h3>
+            <i class="fas fa-chevron-down text-primary-green"></i>
+          </div>
+          <div class="mt-4 text-gray-600 faq-answer" style="display:none;">
+            <p>Down payment requirements vary based on the vehicle price and your financial situation. We offer flexible options starting as low as $500 for qualified buyers. The down payment affects your weekly/monthly payment amount, so a larger down payment will result in lower recurring payments.</p>
+          </div>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-custom faq-item">
+          <div class="flex justify-between items-center cursor-pointer faq-question">
+            <h3 class="font-bold text-lg text-primary-dark">Do your cars come with a warranty?</h3>
+            <i class="fas fa-chevron-down text-primary-green"></i>
+          </div>
+          <div class="mt-4 text-gray-600 faq-answer" style="display:none;">
+            <p>Yes, all our vehicles come with a limited 30-day powertrain warranty. We also offer extended warranty options for additional peace of mind. Every car undergoes a thorough 150-point inspection before being offered for sale to ensure quality and reliability.</p>
+          </div>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-custom faq-item">
+          <div class="flex justify-between items-center cursor-pointer faq-question">
+            <h3 class="font-bold text-lg text-primary-dark">How do weekly payments work?</h3>
+            <i class="fas fa-chevron-down text-primary-green"></i>
+          </div>
+          <div class="mt-4 text-gray-600 faq-answer" style="display:none;">
+            <p>Our weekly payment option is designed to align with how many people get paid. You can choose to make payments in person at our dealership, through our secure online portal, or via automatic deductions. Weekly payments help keep the amounts smaller and more manageable within your budget.</p>
+          </div>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-custom faq-item">
+          <div class="flex justify-between items-center cursor-pointer faq-question">
+            <h3 class="font-bold text-lg text-primary-dark">Do you offer trade-ins?</h3>
+            <i class="fas fa-chevron-down text-primary-green"></i>
+          </div>
+          <div class="mt-4 text-gray-600 faq-answer" style="display:none;">
+            <p>Yes, we accept trade-ins and will offer you a fair market value for your current vehicle. The trade-in value can be applied toward your down payment on your new car purchase, potentially reducing or eliminating your out-of-pocket down payment.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section class="py-16 bg-white" id="contact">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold mb-2 text-primary-dark text-center">Contact Our Team</h2>
+      <p class="text-gray-600 text-center mb-12">Have questions? Ready to see a vehicle? Get in touch with our friendly team today.</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-4xl mx-auto">
+        <!-- Form -->
+        <form class="space-y-6 bg-white p-8 rounded-lg shadow-custom border border-primary-dark">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block mb-2 text-sm font-medium text-primary-dark">First Name</label>
+              <input type="text" class="w-full px-4 py-3 rounded-md bg-white text-gray-800 border-2 border-primary-dark focus:outline-none focus:ring-2 focus:ring-primary-green focus:border-primary-green" placeholder="First Name">
+            </div>
+            <div>
+              <label class="block mb-2 text-sm font-medium text-primary-dark">Last Name</label>
+              <input type="text" class="w-full px-4 py-3 rounded-md bg-white text-gray-800 border-2 border-primary-dark focus:outline-none focus:ring-2 focus:ring-primary-green focus:border-primary-green" placeholder="Last Name">
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block mb-2 text-sm font-medium text-primary-dark">Email</label>
+              <input type="email" class="w-full px-4 py-3 rounded-md bg-white text-gray-800 border-2 border-primary-dark focus:outline-none focus:ring-2 focus:ring-primary-green focus:border-primary-green" placeholder="Email">
+            </div>
+            <div>
+              <label class="block mb-2 text-sm font-medium text-primary-dark">Phone</label>
+              <input type="tel" class="w-full px-4 py-3 rounded-md bg-white text-gray-800 border-2 border-primary-dark focus:outline-none focus:ring-2 focus:ring-primary-green focus:border-primary-green" placeholder="Phone">
+            </div>
+          </div>
+          <div>
+            <label class="block mb-2 text-sm font-medium text-primary-dark">Message</label>
+            <textarea rows="3" class="w-full px-4 py-3 rounded-md bg-white text-gray-800 border-2 border-primary-dark focus:outline-none focus:ring-2 focus:ring-primary-green focus:border-primary-green" placeholder="Message"></textarea>
+          </div>
+          <button type="submit" style="background:#76c043;color:#fff;padding:0.75rem 0;border-radius:0.75rem;font-weight:500;box-shadow:0 2px 8px rgba(0,0,0,0.08);width:100%;" class="font-medium shadow-md text-lg">Send Message</button>
+        </form>
+        <!-- Contact Info -->
+        <div class="bg-gray-50 p-8 rounded-lg shadow-custom border border-primary-dark flex flex-col justify-between">
+          <div>
+            <h3 class="text-xl font-bold mb-4 text-primary-dark">Contact Information</h3>
+            <ul class="space-y-4 mb-6">
+              <li class="flex items-center text-primary-green"><i class="fas fa-map-marker-alt mr-3"></i>123 Auto Drive, Newark, NJ 07102</li>
+              <li class="flex items-center text-primary-green"><i class="fas fa-phone mr-3"></i>(973) 393-8674</li>
+              <li class="flex items-center text-primary-green"><i class="fas fa-envelope mr-3"></i>info@brazilianautogroup.com</li>
+              <li class="flex items-center text-primary-green"><i class="fas fa-clock mr-3"></i>Monday - Saturday: 9:00 AM - 7:00 PM<br>Sunday: 10:00 AM - 4:00 PM</li>
+            </ul>
+            <h4 class="font-bold mb-2 text-primary-dark">Connect With Us</h4>
+            <div class="flex space-x-4">
+              <a href="#" class="text-primary-green hover:text-green-700 text-2xl"><i class="fab fa-facebook"></i></a>
+              <a href="#" class="text-primary-green hover:text-green-700 text-2xl"><i class="fab fa-instagram"></i></a>
+              <a href="https://wa.me/19733938674" target="_blank" class="text-primary-green hover:text-green-700 text-2xl"><i class="fab fa-whatsapp"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-brand-dark text-white py-10 mt-12">
+    <div class="container mx-auto px-4 text-center">
+      <img src="https://page1.genspark.site/v1/base64_upload/d31efdedb1232115fd6ffa6c27cb9e5b" alt="Logo" class="h-16 mx-auto mb-4">
+      <p class="text-gray-400 mb-4">Quality used vehicles with accessible financing options for the immigrant community.</p>
+      <div class="flex justify-center space-x-4">
+        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-facebook"></i></a>
+        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-instagram"></i></a>
+        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-whatsapp"></i></a>
+      </div>
+      <hr class="border-gray-800 my-8">
+      <p class="text-gray-400">&copy; 2025 Brazilian Auto Group. All rights reserved.</p>
+    </div>
+  </footer>
+
+<script>
+// Configuração dos endpoints
+const REMOTE_API_URL = 'https://brazilian-auto-group.onrender.com/api/cars';
+
+// Mock de carros para desenvolvimento local SEMPRE
+const MOCK_CARS = [
+  {
+    _id: 'mock1',
+    brand: 'Toyota',
+    model: 'Corolla',
+    year: 2018,
+    mileage: 45000,
+    fuelType: 'Gasoline',
+    price: 13900,
+    status: 'available',
+    images: ['/images/no-image.png'],
+    description: 'Reliable and economic sedan, perfect for city driving.'
+  },
+  {
+    _id: 'mock2',
+    brand: 'Honda',
+    model: 'Civic',
+    year: 2017,
+    mileage: 52000,
+    fuelType: 'Gasoline',
+    price: 14500,
+    status: 'available',
+    images: ['/images/no-image.png'],
+    description: 'Sporty and comfortable, with great fuel efficiency.'
+  },
+  {
+    _id: 'mock3',
+    brand: 'Chevrolet',
+    model: 'Equinox',
+    year: 2019,
+    mileage: 39000,
+    fuelType: 'Flex',
+    price: 16900,
+    status: 'available',
+    images: ['/images/no-image.png'],
+    description: 'Spacious SUV, ideal for families and trips.'
+  }
+];
+
+function formatPrice(price) {
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(price);
+}
+
+function showError(container, message) {
+  container.innerHTML = `
+    <div class="text-center p-8">
+      <i class="fas fa-exclamation-circle text-red-500 text-4xl mb-4"></i>
+      <p class="text-gray-600">${message}</p>
+      <p class="text-sm text-gray-500 mt-2">Por favor, tente novamente mais tarde ou entre em contato conosco.</p>
+    </div>
+  `;
+}
+
+// SEMPRE usar mock localmente
+async function fetchCars() {
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    return MOCK_CARS;
+  }
+  // Se for produção/WordPress, tenta buscar do backend
+  try {
+    const response = await fetch(REMOTE_API_URL);
+    if (!response.ok) throw new Error('API remota não respondeu');
+    return await response.json();
+  } catch (e) {
+    return MOCK_CARS;
+  }
+}
+
+// Carregar Featured e Inventory
+async function loadCars() {
+  const cars = await fetchCars();
+  const featuredContainer = document.getElementById('featuredCars');
+  const inventoryContainer = document.getElementById('carsList');
+
+  if (!cars) {
+    // Se não conseguiu buscar de lugar nenhum, mostra mock
+    showError(featuredContainer, 'Não foi possível carregar os veículos em destaque. Mostrando exemplos.');
+    showError(inventoryContainer, 'Não foi possível carregar o inventário de veículos. Mostrando exemplos.');
+    renderCars(MOCK_CARS, featuredContainer, true);
+    renderCars(MOCK_CARS, inventoryContainer, false);
+    return;
+  }
+
+  // Featured (primeiros 3 disponíveis)
+  const featured = cars.filter(c => c.status === 'available').slice(0, 3);
+  if (featuredContainer) {
+    if (featured.length === 0) {
+      showError(featuredContainer, 'Nenhum veículo em destaque disponível no momento.');
+    } else {
+      featuredContainer.innerHTML = '';
+      renderCars(featured, featuredContainer, true);
+    }
+  }
+
+  // Inventory (todos os carros)
+  if (inventoryContainer) {
+    if (cars.length === 0) {
+      showError(inventoryContainer, 'Nenhum veículo disponível no momento.');
+    } else {
+      inventoryContainer.innerHTML = '';
+      renderCars(cars, inventoryContainer, false);
+    }
+  }
+}
+
+// Função para renderizar carros
+function renderCars(cars, container, isFeatured) {
+  cars.forEach(car => {
+    const mainImage = car.images && car.images.length > 0 ? car.images[0] : '/images/no-image.png';
+    if (isFeatured) {
+      container.innerHTML += `
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col">
+          <div class="relative h-56">
+            <span class="absolute top-4 right-4 bg-brand-green text-white px-4 py-1 rounded-full text-sm font-medium">${car.status === 'available' ? 'Available' : 'Sold'}</span>
+            <img src="${mainImage}" alt="${car.brand} ${car.model}" class="w-full h-full object-cover">
+          </div>
+          <div class="p-6 flex-1 flex flex-col">
+            <h3 class="font-bold text-xl mb-2">${car.brand} ${car.model}</h3>
+            <div class="flex justify-between mb-4 text-gray-600">
+              <span><i class="fas fa-car-side mr-1"></i> ${car.year}</span>
+              <span><i class="fas fa-tachometer-alt mr-1"></i> ${car.mileage} mi</span>
+              <span><i class="fas fa-gas-pump mr-1"></i> ${car.fuelType}</span>
+            </div>
+            <div class="mb-2">
+              <span class="text-2xl font-bold text-brand-green">${formatPrice(car.cashPrice)}</span>
+            </div>
+            <div class="mb-2">
+              <span class="text-sm text-gray-500">Financed: ${formatPrice(car.financedPrice)}</span>
+            </div>
+            <div class="mb-2">
+              <span class="text-xs text-gray-400">VIN: ${car.vinNumber}</span>
+            </div>
+            <button onclick="openModal('${car._id}')" class="block text-center bg-brand-green hover:bg-green-600 text-white font-medium py-2 px-4 rounded-md transition duration-300 ease-in-out mt-auto">View Details</button>
+          </div>
+        </div>
+      `;
+    } else {
+      container.innerHTML += `
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col">
+          <div class="relative h-56">
+            <span class="absolute top-4 right-4 bg-brand-green text-white px-4 py-1 rounded-full text-sm font-medium">${car.status === 'available' ? 'Available' : 'Sold'}</span>
+            <img src="${mainImage}" alt="${car.brand} ${car.model}" class="w-full h-full object-cover">
+          </div>
+          <div class="p-6 flex-1 flex flex-col">
+            <h3 class="font-bold text-xl mb-2">${car.brand} ${car.model}</h3>
+            <div class="flex justify-between mb-4 text-gray-600">
+              <span><i class="fas fa-calendar-alt mr-1"></i> ${car.year}</span>
+              <span><i class="fas fa-tachometer-alt mr-1"></i> ${car.mileage} mi</span>
+              <span><i class="fas fa-gas-pump mr-1"></i> ${car.fuelType}</span>
+            </div>
+            <div class="mb-2">
+              <span class="text-2xl font-bold text-brand-green">${formatPrice(car.cashPrice)}</span>
+            </div>
+            <div class="mb-2">
+              <span class="text-sm text-gray-500">Financed: ${formatPrice(car.financedPrice)}</span>
+            </div>
+            <div class="mb-2">
+              <span class="text-xs text-gray-400">VIN: ${car.vinNumber}</span>
+            </div>
+            <button onclick="openModal('${car._id}')" class="block text-center bg-brand-green hover:bg-green-600 text-white font-medium py-2 px-4 rounded-md transition duration-300 ease-in-out mt-auto">View Details</button>
+          </div>
+        </div>
+      `;
+    }
+  });
+}
+
+// Modal de detalhes (ajustado para buscar do endpoint correto)
+async function openModal(carId) {
+  let car = null;
+  // Se mock, busca do mock
+  if (carId.startsWith('mock')) {
+    car = MOCK_CARS.find(c => c._id === carId);
+  } else {
+    // Se WordPress, sempre busca do REMOTE
+    let url = (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1')
+      ? `${REMOTE_API_URL}/${carId}`
+      : `${REMOTE_API_URL}/${carId}`;
+    try {
+      let response = await fetch(url);
+      if (!response.ok) throw new Error('API local não respondeu');
+      car = await response.json();
+    } catch (e1) {
+      try {
+        let response = await fetch(`${REMOTE_API_URL}/${carId}`);
+        if (!response.ok) throw new Error('API remota não respondeu');
+        car = await response.json();
+      } catch (e2) {
+        alert('Não foi possível carregar os detalhes do veículo. Por favor, tente novamente mais tarde.');
+        return;
+      }
+    }
+  }
+  let imagesHtml = '';
+  if (car.images && car.images.length > 0) {
+    imagesHtml = `
+      <div class="flex flex-col gap-4 md:w-1/2">
+        <div class="w-full">
+          <img src="${car.images[0]}" class="w-full rounded-lg shadow" style="max-height:350px;object-fit:cover;" id="mainModalImg">
+        </div>
+        <div class="flex gap-2 mt-2">
+          ${car.images.map(img => `<img src="${img}" class="h-20 w-28 object-cover rounded cursor-pointer border-2 border-transparent hover:border-brand-green" onclick="document.getElementById('mainModalImg').src='${img}'">`).join('')}
+        </div>
+      </div>
+    `;
+  } else {
+    imagesHtml = `<div class="md:w-1/2"><img src="/images/no-image.png" class="w-full rounded-lg shadow" style="max-height:350px;object-fit:cover;"></div>`;
+  }
+  let detailsHtml = `
+    <div class="flex-1 flex flex-col justify-between">
+      <div>
+        <h2 class="text-3xl font-bold mb-2">${car.brand} ${car.model}</h2>
+        <p class="text-lg text-gray-600 mb-4">${car.year} &bull; ${car.fuelType} &bull; ${car.mileage} mi</p>
+        <div class="mb-4">
+          <span class="text-2xl font-bold text-brand-green">${formatPrice(car.price)}</span>
+          <span class="ml-2 text-gray-500">${car.status === 'available' ? 'Available' : 'Sold'}</span>
+        </div>
+        <p class="mb-4">${car.description || ''}</p>
+        <a href="https://wa.me/19733938674?text=Hello! I'm interested in the ${encodeURIComponent(car.brand + ' ' + car.model)} I saw on your website." target="_blank" rel="noopener" class="inline-block mt-4 bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-md shadow transition">
+          <i class="fab fa-whatsapp mr-2"></i> Contact on WhatsApp
+        </a>
+      </div>
+    </div>
+  `;
+  document.getElementById('modalContent').innerHTML = `<div class="flex flex-col md:flex-row gap-8">${imagesHtml}${detailsHtml}</div>`;
+  document.getElementById('carModal').classList.remove('hidden');
+}
+
+function closeModal() {
+  document.getElementById('carModal').classList.add('hidden');
+}
+
+// FAQ Accordion
+const faqQuestions = document.querySelectorAll('.faq-question');
+faqQuestions.forEach(q => {
+  q.addEventListener('click', function() {
+    const answer = this.parentElement.querySelector('.faq-answer');
+    const icon = this.querySelector('i');
+    if (answer.style.display === 'none' || answer.style.display === '') {
+      answer.style.display = 'block';
+      icon.classList.remove('fa-chevron-down');
+      icon.classList.add('fa-chevron-up');
+    } else {
+      answer.style.display = 'none';
+      icon.classList.remove('fa-chevron-up');
+      icon.classList.add('fa-chevron-down');
+    }
+  });
+});
+
+document.addEventListener('DOMContentLoaded', loadCars);
+</script>
+
 </body>
-</html> 
+</html>
+
