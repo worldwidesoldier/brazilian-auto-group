@@ -91,20 +91,33 @@
                             .filepond--panel-root {
                                 min-height: 50px;
                             }
+                            .filepond--list {
+                                max-height: 120px;
+                                overflow-y: auto;
+                                margin-bottom: 16px;
+                            }
                             .filepond--item {
                                 min-height: 32px !important;
                                 max-height: 32px !important;
                                 height: 32px !important;
                                 margin-bottom: 2px;
+                                max-width: 320px;
+                                overflow: hidden;
                             }
                             .filepond--file {
                                 min-height: 32px !important;
                                 max-height: 32px !important;
                                 height: 32px !important;
+                                max-width: 320px;
+                                overflow: hidden;
                             }
                             .filepond--file-info {
                                 font-size: 0.9rem;
                                 padding: 0 4px;
+                                max-width: 220px;
+                                overflow: hidden;
+                                text-overflow: ellipsis;
+                                white-space: nowrap;
                             }
                             .filepond--file-poster {
                                 display: none !important;
@@ -112,6 +125,37 @@
                             .filepond--file-action-button {
                                 top: 2px !important;
                                 right: 2px !important;
+                            }
+                            /* Espaçamento extra entre FilePond e o botão Save */
+                            #editImages {
+                                margin-bottom: 24px;
+                            }
+                            /* Garantir que o botão Save fique sempre visível no mobile */
+                            #editModal .flex.justify-end {
+                                margin-top: 16px;
+                                background: #fff;
+                                z-index: 2;
+                                position: sticky;
+                                bottom: 0;
+                                padding-bottom: 8px;
+                            }
+                            /* Mobile: garantir que FilePond não ocupe toda a largura */
+                            @media (max-width: 600px) {
+                                .filepond--root {
+                                    max-width: 98vw;
+                                    min-width: 120px;
+                                }
+                                .filepond--item, .filepond--file {
+                                    max-width: 90vw;
+                                }
+                                #editModal .flex.justify-end {
+                                    position: fixed;
+                                    left: 0;
+                                    right: 0;
+                                    bottom: 0;
+                                    width: 100vw;
+                                    box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+                                }
                             }
                         </style>
                     </div>
