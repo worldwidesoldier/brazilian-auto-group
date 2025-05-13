@@ -74,6 +74,22 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Car Photos</label>
                         <input id="images" name="images" type="file" accept="image/*" multiple required>
+                        <style>
+                            /* Deixar a caixa do FilePond mais compacta */
+                            .filepond--root {
+                                max-width: 350px;
+                                min-width: 180px;
+                                margin: 0 auto;
+                            }
+                            .filepond--drop-label {
+                                min-height: 60px;
+                                padding: 10px 0;
+                                font-size: 1rem;
+                            }
+                            .filepond--panel-root {
+                                min-height: 80px;
+                            }
+                        </style>
                     </div>
                     <div>
                         <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
