@@ -181,7 +181,7 @@ exports.updateCar = async (req, res) => {
             updates,
             { new: true, runValidators: true }
         );
-        res.json(updatedCar);
+        res.status(200).json({ success: true, car: updatedCar });
     } catch (error) {
         console.error('Error updating car:', error);
         res.status(400).json({ message: 'Error updating car' });
