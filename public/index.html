@@ -512,14 +512,16 @@ async function openModal(carId) {
         <div>
           <h2 class="text-3xl font-bold mb-2">${car.brand} ${car.model}</h2>
           <p class="text-lg text-gray-600 mb-4">${car.year} &bull; ${car.fuelType} &bull; ${car.mileage} mi</p>
-          <div class="mb-2">
-            <span class="text-2xl font-bold text-brand-green">${formatPrice(car.cashPrice)}</span>
+          <div class="mb-1">
+            <span class="text-xl font-bold text-brand-green">Cash Price: ${formatPrice(car.cashPrice)}</span>
+          </div>
+          <div class="mb-1">
+            <span class="text-sm text-gray-500">Financed Price: ${formatPrice(car.financedPrice)}</span>
           </div>
           <div class="mb-2">
             <span class="text-xs text-gray-400">VIN: ${car.vinNumber || 'N/A'}</span>
           </div>
           <div class="mb-4">
-            <span class="text-sm text-gray-500">Financed: ${formatPrice(car.financedPrice)}</span>
             <span class="ml-2 text-gray-500">${car.status === 'available' ? 'Available' : 'Sold'}</span>
           </div>
           <p class="mb-4">${car.description || ''}</p>
