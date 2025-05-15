@@ -487,7 +487,8 @@ async function openModal(carId) {
   try {
     const response = await fetch(`${REMOTE_API_URL}/${carId}`);
     if (!response.ok) throw new Error('Car not found');
-    const car = await response.json();
+    const result = await response.json();
+    const car = result.data || {};
     
     let imagesHtml = '';
     if (car.images && car.images.length > 0) {
