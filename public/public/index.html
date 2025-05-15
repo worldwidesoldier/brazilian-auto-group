@@ -37,6 +37,9 @@ async function loadCars() {
             <div class="mb-2">
               <span class="text-2xl font-bold text-brand-green">${formatPrice(car.cashPrice)}</span>
             </div>
+            <div class="mb-2">
+              <span class="text-xs text-gray-400">VIN: ${car.vinNumber || 'N/A'}</span>
+            </div>
             <div class="mb-4">
               <span class="text-sm text-gray-500">Financed: ${formatPrice(car.financedPrice)}</span>
             </div>
@@ -68,6 +71,9 @@ async function loadCars() {
             </div>
             <div class="mb-2">
               <span class="text-2xl font-bold text-brand-green">${formatPrice(car.cashPrice)}</span>
+            </div>
+            <div class="mb-2">
+              <span class="text-xs text-gray-400">VIN: ${car.vinNumber || 'N/A'}</span>
             </div>
             <div class="mb-4">
               <span class="text-sm text-gray-500">Financed: ${formatPrice(car.financedPrice)}</span>
@@ -106,6 +112,9 @@ async function openModal(carId) {
         <p class="text-lg text-gray-600 mb-4">${car.year} &bull; ${car.fuelType} &bull; ${car.mileage} mi</p>
         <div class="mb-2">
           <span class="text-2xl font-bold text-brand-green">${formatPrice(car.cashPrice)}</span>
+        </div>
+        <div class="mb-2">
+          <span class="text-xs text-gray-400">VIN: ${car.vinNumber || 'N/A'}</span>
         </div>
         <div class="mb-4">
           <span class="text-sm text-gray-500">Financed: ${formatPrice(car.financedPrice)}</span>

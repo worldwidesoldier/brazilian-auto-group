@@ -267,17 +267,57 @@
             }).format(num);
         }
 
+        // Show notification
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 ${
+                type === 'success' ? 'bg-green-500' : 'bg-red-500'
+            } text-white`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 5000);
+        }
+
+        // Show loading state
+        function setLoading(isLoading) {
+            const buttons = document.querySelectorAll('button[type="submit"]');
+            buttons.forEach(button => {
+                button.disabled = isLoading;
+                button.innerHTML = isLoading ? 
+                    '<i class="fas fa-spinner fa-spin"></i> Loading...' : 
+                    button.getAttribute('data-original-text') || button.textContent;
+            });
+        }
+
+        // Save original button text
+        document.querySelectorAll('button[type="submit"]').forEach(button => {
+            button.setAttribute('data-original-text', button.textContent);
+        });
+
         // Load cars
         async function loadCars() {
             try {
-                const response = await fetch('/api/cars');
-                const cars = await response.json();
                 const carsList = document.getElementById('carsList');
+                carsList.innerHTML = '<div class="col-span-full text-center py-8"><i class="fas fa-spinner fa-spin text-2xl"></i></div>';
+                
+                const response = await fetch('/api/cars');
+                const result = await response.json();
+                
+                if (!result.success) {
+                    throw new Error(result.message || 'Error loading cars');
+                }
+
+                const cars = result.data;
                 carsList.innerHTML = '';
+
+                if (cars.length === 0) {
+                    carsList.innerHTML = '<div class="col-span-full text-center py-8 text-gray-500">No cars found</div>';
+                    return;
+                }
 
                 cars.forEach(car => {
                     const card = document.createElement('div');
-                    card.className = 'bg-white rounded-lg shadow overflow-hidden';
+                    card.className = 'bg-white rounded-lg shadow overflow-hidden transform transition-transform hover:scale-105';
                     
                     // Use first image as main image
                     const mainImage = car.images && car.images.length > 0 ? car.images[0] : '/images/no-image.png';
@@ -286,7 +326,12 @@
                     const imageUrl = mainImage.startsWith('http') ? mainImage : mainImage;
                     
                     card.innerHTML = `
-                        <img src="${imageUrl}" class="w-full h-48 object-cover" alt="Car photo">
+                        <div class="relative">
+                            <img src="${imageUrl}" class="w-full h-48 object-cover" alt="Car photo">
+                            <span class="absolute top-2 right-2 px-2 py-1 rounded text-sm font-medium ${
+                                car.status === 'available' ? 'bg-green-500' : 'bg-red-500'
+                            } text-white">${car.status === 'available' ? 'Available' : 'Sold'}</span>
+                        </div>
                         <div class="p-4">
                             <h3 class="text-lg font-semibold">${car.brand} ${car.model}</h3>
                             <p class="text-gray-600">Year: ${car.year}</p>
@@ -295,12 +340,11 @@
                             <p class="text-gray-400 text-xs">VIN: ${car.vinNumber}</p>
                             <p class="text-gray-600">Mileage: ${car.mileage} mi</p>
                             <p class="text-gray-600">Fuel: ${car.fuelType}</p>
-                            <p class="text-gray-600">Status: ${car.status === 'available' ? 'Available' : 'Sold'}</p>
                             <div class="mt-4 flex space-x-2">
-                                <button onclick="openEditModal('${car._id}')" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">
+                                <button onclick="openEditModal('${car._id}')" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition-colors">
                                     <i class="fas fa-edit"></i> Edit
                                 </button>
-                                <button onclick="deleteCar('${car._id}')" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700">
+                                <button onclick="deleteCar('${car._id}')" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition-colors">
                                     <i class="fas fa-trash"></i> Remove
                                 </button>
                             </div>
@@ -310,15 +354,16 @@
                 });
             } catch (error) {
                 console.error('Error loading cars:', error);
-                alert('Error loading cars. Please try again.');
+                showNotification(error.message || 'Error loading cars. Please try again.', 'error');
             }
         }
 
         // Add car
         document.getElementById('addCarForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+            setLoading(true);
+            
             const formData = new FormData(e.target);
-            // Remove imagens do formData e adiciona as do FilePond
             formData.delete('images');
             if (pond) {
                 pond.getFiles().forEach(fileItem => {
@@ -332,17 +377,21 @@
                     body: formData
                 });
 
-                if (response.ok) {
+                const result = await response.json();
+
+                if (response.ok && result.success) {
                     e.target.reset();
                     if (pond) pond.removeFiles();
                     loadCars();
-                    alert('Car added successfully!');
+                    showNotification(result.message || 'Car added successfully!');
                 } else {
-                    throw new Error('Error adding car');
+                    throw new Error(result.message || 'Error adding car');
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('Error adding car. Please try again.');
+                showNotification(error.message || 'Error adding car. Please try again.', 'error');
+            } finally {
+                setLoading(false);
             }
         });
 
@@ -362,7 +411,12 @@
             // Load car data
             fetch(`/api/cars/${carId}`)
                 .then(response => response.json())
-                .then(car => {
+                .then(result => {
+                    if (!result.success) {
+                        throw new Error(result.message || 'Error loading car data');
+                    }
+
+                    const car = result.data;
                     const form = document.getElementById('editCarForm');
                     form.id.value = car._id;
                     form.brand.value = car.brand;
@@ -394,7 +448,8 @@
                 })
                 .catch(error => {
                     console.error('Error loading car:', error);
-                    alert('Error loading car data. Please try again.');
+                    showNotification(error.message || 'Error loading car data. Please try again.', 'error');
+                    closeEditModal();
                 });
         }
 
@@ -420,30 +475,32 @@
                     body: JSON.stringify({ imageUrl })
                 });
 
-                if (response.ok) {
+                const result = await response.json();
+
+                if (response.ok && result.success) {
                     openEditModal(carId); // Reload car data
+                    showNotification(result.message || 'Image removed successfully');
                 } else {
-                    throw new Error('Error removing image');
+                    throw new Error(result.message || 'Error removing image');
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('Error removing image. Please try again.');
+                showNotification(error.message || 'Error removing image. Please try again.', 'error');
             }
         }
 
         document.getElementById('editCarForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+            setLoading(true);
+            
             const formData = new FormData(e.target);
-            // Remover qualquer campo de imagem antigo
             formData.delete('editImages');
             formData.delete('images');
             if (editPond) {
-                // Adicionar campo oldImages com as imagens locais que sobraram
                 const oldImages = editPond.getFiles()
                     .filter(f => f.origin === FilePond.FileOrigin.LIMBO || f.origin === FilePond.FileOrigin.LOCAL)
                     .map(f => f.source);
                 formData.append('oldImages', JSON.stringify(oldImages));
-                // Só envia arquivos realmente novos
                 editPond.getFiles().forEach(fileItem => {
                     if (fileItem.origin === FilePond.FileOrigin.INPUT) {
                         formData.append('images', fileItem.file);
@@ -457,21 +514,20 @@
                     body: formData
                 });
 
-                if (response.status >= 200 && response.status < 300) {
+                const result = await response.json();
+
+                if (response.ok && result.success) {
                     closeEditModal();
                     loadCars();
-                    alert('Car updated successfully!');
+                    showNotification(result.message || 'Car updated successfully!');
                 } else {
-                    let errorMsg = 'Error updating car';
-                    try {
-                        const data = await response.json();
-                        if (data && data.message) errorMsg = data.message;
-                    } catch (err) {}
-                    alert(errorMsg);
+                    throw new Error(result.message || 'Error updating car');
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('Error updating car. Please try again.');
+                showNotification(error.message || 'Error updating car. Please try again.', 'error');
+            } finally {
+                setLoading(false);
             }
         });
 
@@ -486,15 +542,17 @@
                     method: 'DELETE'
                 });
 
-                if (response.ok) {
+                const result = await response.json();
+
+                if (response.ok && result.success) {
                     loadCars();
-                    alert('Car removed successfully!');
+                    showNotification(result.message || 'Car removed successfully!');
                 } else {
-                    throw new Error('Error removing car');
+                    throw new Error(result.message || 'Error removing car');
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('Error removing car. Please try again.');
+                showNotification(error.message || 'Error removing car. Please try again.', 'error');
             }
         }
 
@@ -525,8 +583,8 @@
                     acceptedFileTypes: ['image/*'],
                     maxFileSize: '5MB',
                     labelIdle: 'Arraste as fotos ou <span class="filepond--label-action">clique para selecionar</span> (máx 5)',
-                    allowImagePreview: false,
-                    allowFilePoster: false,
+                    allowImagePreview: true,
+                    allowFilePoster: true,
                     allowFileTypeValidation: true,
                     allowFileSizeValidation: true,
                     itemInsertLocation: 'after',
@@ -548,8 +606,8 @@
                     acceptedFileTypes: ['image/*'],
                     maxFileSize: '5MB',
                     labelIdle: 'Arraste as fotos ou <span class="filepond--label-action">clique para selecionar</span> (máx 5)',
-                    allowImagePreview: false,
-                    allowFilePoster: false,
+                    allowImagePreview: true,
+                    allowFilePoster: true,
                     allowFileTypeValidation: true,
                     allowFileSizeValidation: true,
                     itemInsertLocation: 'after',

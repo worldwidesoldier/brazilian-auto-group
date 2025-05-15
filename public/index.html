@@ -34,34 +34,37 @@
     @media (max-width: 768px) {
       .car-card { min-width: 100%; }
       .hero-content { text-align: center; align-items: center; }
-      .hero-buttons { flex-direction: column; gap: 1rem; }
+      .hero-buttons { flex-direction: column; gap: 0.7rem; }
       .header-menu { display: none; }
       .header-mobile { display: flex !important; }
+      header img { height: 85px !important; max-height: 85px !important; }
+      .header-mobile i.fas.fa-phone { font-size: 1.1rem !important; }
+      .header-mobile + a.bg-brand-green, .header-mobile + a { font-size: 0.95rem !important; padding: 0.7rem 1.3rem !important; }
+      .mobile-menu { background: #fff !important; }
+      .mobile-menu a { color: #0a2713 !important; }
     }
     #carModal .close-modal-btn {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-      z-index: 50;
-      background: rgba(255,255,255,0.85);
+      position: fixed;
+      top: 1.2rem;
+      right: 1.2rem;
+      z-index: 1050;
+      background: rgba(255,255,255,0.95);
       border-radius: 9999px;
-      padding: 0.25rem 0.5rem;
+      padding: 0.4rem 0.7rem;
       font-size: 2rem;
       color: #333;
       border: none;
       cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
       transition: background 0.2s;
-    }
-    #carModal .close-modal-btn:hover {
-      background: #f87171;
-      color: #fff;
     }
     @media (max-width: 640px) {
       #carModal .close-modal-btn {
-        top: 0.5rem;
-        right: 0.5rem;
-        font-size: 1.5rem;
-        padding: 0.15rem 0.4rem;
+        top: 0.7rem;
+        right: 0.7rem;
+        font-size: 2.2rem;
+        min-width: 48px;
+        min-height: 48px;
       }
     }
   </style>
@@ -232,7 +235,7 @@
           <h3 class="text-xl font-bold mb-4">In-House Financing</h3>
           <ul class="space-y-4 mb-8">
             <li class="flex items-start"><i class="fas fa-check-circle text-primary-green mt-1 mr-3"></i>No credit check required - we finance everyone!</li>
-            <li class="flex items-start"><i class="fas fa-check-circle text-primary-green mt-1 mr-3"></i>Small down payment options starting from $500</li>
+            <li class="flex items-start"><i class="fas fa-check-circle text-primary-green mt-1 mr-3"></i>Small down payment options available</li>
             <li class="flex items-start"><i class="fas fa-check-circle text-primary-green mt-1 mr-3"></i>Weekly, bi-weekly or monthly payment plans</li>
             <li class="flex items-start"><i class="fas fa-check-circle text-primary-green mt-1 mr-3"></i>Flexible terms up to 48 months</li>
             <li class="flex items-start"><i class="fas fa-check-circle text-primary-green mt-1 mr-3"></i>Build credit history with on-time payments</li>
@@ -264,7 +267,7 @@
   </section>
 
   <!-- MODAL DE DETALHES -->
-  <div id="carModal" class="fixed inset-0 modal-bg flex items-center justify-center hidden">
+  <div id="carModal" class="fixed inset-0 modal-bg flex items-center justify-center hidden" onclick="if(event.target.id==='carModal'){closeModal();}">
     <div class="modal bg-white rounded-lg shadow-lg max-w-3xl w-full p-8 relative">
       <button onclick="closeModal()" class="close-modal-btn"><i class="fas fa-times"></i></button>
       <div id="modalContent"></div>
@@ -301,16 +304,7 @@
             <i class="fas fa-chevron-down text-primary-green"></i>
           </div>
           <div class="mt-4 text-gray-600 faq-answer" style="display:none;">
-            <p>Down payment requirements vary based on the vehicle price and your financial situation. We offer flexible options starting as low as $500 for qualified buyers. The down payment affects your weekly/monthly payment amount, so a larger down payment will result in lower recurring payments.</p>
-          </div>
-        </div>
-        <div class="bg-white p-6 rounded-lg shadow-custom faq-item">
-          <div class="flex justify-between items-center cursor-pointer faq-question">
-            <h3 class="font-bold text-lg text-primary-dark">Do your cars come with a warranty?</h3>
-            <i class="fas fa-chevron-down text-primary-green"></i>
-          </div>
-          <div class="mt-4 text-gray-600 faq-answer" style="display:none;">
-            <p>Yes, all our vehicles come with a limited 30-day powertrain warranty. We also offer extended warranty options for additional peace of mind. Every car undergoes a thorough 150-point inspection before being offered for sale to ensure quality and reliability.</p>
+            <p>Down payment requirements vary based on the vehicle price and your financial situation. We offer flexible options with a low down payment for qualified buyers. The down payment affects your weekly/monthly payment amount, so a larger down payment will result in lower recurring payments.</p>
           </div>
         </div>
         <div class="bg-white p-6 rounded-lg shadow-custom faq-item">
@@ -319,7 +313,7 @@
             <i class="fas fa-chevron-down text-primary-green"></i>
           </div>
           <div class="mt-4 text-gray-600 faq-answer" style="display:none;">
-            <p>Our weekly payment option is designed to align with how many people get paid. You can choose to make payments in person at our dealership, through our secure online portal, or via automatic deductions. Weekly payments help keep the amounts smaller and more manageable within your budget.</p>
+            <p>Our weekly payment option is designed to align with how many people get paid. You can choose to make payments in person at our location, via Zelle, or by bank transfer. Choose the option that works best for you. Weekly payments help keep the amounts smaller and more manageable within your budget.</p>
           </div>
         </div>
         <div class="bg-white p-6 rounded-lg shadow-custom faq-item">
@@ -409,12 +403,26 @@ async function loadCars() {
         const mainImage = car.images && car.images.length > 0 ? car.images[0] : '/images/no-image.png';
         featuredContainer.innerHTML += `
           <div class="car-card bg-white rounded-lg shadow-lg overflow-hidden">
-            <img src="${mainImage}" alt="${car.brand} ${car.model}" class="w-full h-48 object-cover">
+            <div class="relative">
+              <img src="${mainImage}" alt="${car.brand} ${car.model}" class="w-full h-48 object-cover">
+              ${car.status === 'available' ? '<span class="absolute top-2 right-2 bg-brand-green text-white px-3 py-1 rounded-full text-xs font-semibold shadow">Available</span>' : ''}
+            </div>
             <div class="p-4">
-              <h3 class="text-xl font-semibold">${car.brand} ${car.model}</h3>
-              <p class="text-gray-600">${car.year} &bull; ${car.fuelType} &bull; ${car.mileage} mi</p>
-              <p class="text-brand-green font-bold mt-2">${formatPrice(car.cashPrice)}</p>
-              <p class="text-sm text-gray-500">Financed: ${formatPrice(car.financedPrice)}</p>
+              <h3 class="text-xl font-semibold mb-2">${car.brand} ${car.model}</h3>
+              <div class="flex justify-between mb-4 text-gray-600">
+                <span><i class="fas fa-car mr-1"></i> ${car.year}</span>
+                <span><i class="fas fa-tachometer-alt mr-1"></i> ${car.mileage} mi</span>
+                <span><i class="fas fa-gas-pump mr-1"></i> ${car.fuelType}</span>
+              </div>
+              <div class="mb-1">
+                <span class="text-xl font-bold text-brand-green">CASH ${formatPrice(car.cashPrice)}</span>
+              </div>
+              <div class="mb-1">
+                <span class="text-sm text-gray-500">Financed ${formatPrice(car.financedPrice)}</span>
+              </div>
+              <div class="mb-2">
+                <span class="text-xs text-gray-400">VIN: ${car.vinNumber || 'N/A'}</span>
+              </div>
               <button onclick="openModal('${car._id}')" class="mt-4 w-full bg-brand-green text-white py-2 rounded hover:bg-opacity-90 transition-colors">
                 View Details
               </button>
@@ -432,12 +440,26 @@ async function loadCars() {
         const mainImage = car.images && car.images.length > 0 ? car.images[0] : '/images/no-image.png';
         inventoryContainer.innerHTML += `
           <div class="car-card bg-white rounded-lg shadow-lg overflow-hidden">
-            <img src="${mainImage}" alt="${car.brand} ${car.model}" class="w-full h-48 object-cover">
+            <div class="relative">
+              <img src="${mainImage}" alt="${car.brand} ${car.model}" class="w-full h-48 object-cover">
+              ${car.status === 'available' ? '<span class="absolute top-2 right-2 bg-brand-green text-white px-3 py-1 rounded-full text-xs font-semibold shadow">Available</span>' : ''}
+            </div>
             <div class="p-4">
-              <h3 class="text-xl font-semibold">${car.brand} ${car.model}</h3>
-              <p class="text-gray-600">${car.year} &bull; ${car.fuelType} &bull; ${car.mileage} mi</p>
-              <p class="text-brand-green font-bold mt-2">${formatPrice(car.cashPrice)}</p>
-              <p class="text-sm text-gray-500">Financed: ${formatPrice(car.financedPrice)}</p>
+              <h3 class="text-xl font-semibold mb-2">${car.brand} ${car.model}</h3>
+              <div class="flex justify-between mb-4 text-gray-600">
+                <span><i class="fas fa-car mr-1"></i> ${car.year}</span>
+                <span><i class="fas fa-tachometer-alt mr-1"></i> ${car.mileage} mi</span>
+                <span><i class="fas fa-gas-pump mr-1"></i> ${car.fuelType}</span>
+              </div>
+              <div class="mb-1">
+                <span class="text-xl font-bold text-brand-green">CASH ${formatPrice(car.cashPrice)}</span>
+              </div>
+              <div class="mb-1">
+                <span class="text-sm text-gray-500">Financed ${formatPrice(car.financedPrice)}</span>
+              </div>
+              <div class="mb-2">
+                <span class="text-xs text-gray-400">VIN: ${car.vinNumber || 'N/A'}</span>
+              </div>
               <button onclick="openModal('${car._id}')" class="mt-4 w-full bg-brand-green text-white py-2 rounded hover:bg-opacity-90 transition-colors">
                 View Details
               </button>
@@ -490,6 +512,9 @@ async function openModal(carId) {
           <div class="mb-2">
             <span class="text-2xl font-bold text-brand-green">${formatPrice(car.cashPrice)}</span>
           </div>
+          <div class="mb-2">
+            <span class="text-xs text-gray-400">VIN: ${car.vinNumber || 'N/A'}</span>
+          </div>
           <div class="mb-4">
             <span class="text-sm text-gray-500">Financed: ${formatPrice(car.financedPrice)}</span>
             <span class="ml-2 text-gray-500">${car.status === 'available' ? 'Available' : 'Sold'}</span>
@@ -503,6 +528,7 @@ async function openModal(carId) {
     `;
     document.getElementById('modalContent').innerHTML = `<div class="flex flex-col md:flex-row gap-8">${imagesHtml}${detailsHtml}</div>`;
     document.getElementById('carModal').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
   } catch (error) {
     console.error('Error loading car details:', error);
     alert('Error loading car details. Please try again later.');
@@ -511,6 +537,7 @@ async function openModal(carId) {
 
 function closeModal() {
   document.getElementById('carModal').classList.add('hidden');
+  document.body.style.overflow = '';
 }
 
 // FAQ Accordion

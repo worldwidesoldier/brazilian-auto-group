@@ -2,6 +2,32 @@ const multer = require('multer');
 const Car = require('../models/Car');
 const { uploadToS3, deleteFromS3 } = require('../config/s3');
 
+/**
+ * Valida os dados de um carro.
+ * @param {Object} data - Dados do carro
+ * @returns {string[]} Lista de erros encontrados
+ */
+const validateCarData = (data) => {
+    const errors = [];
+    
+    if (!data.brand?.trim()) errors.push('Brand is required');
+    if (!data.model?.trim()) errors.push('Model is required');
+    if (!data.year || data.year < 1900 || data.year > new Date().getFullYear() + 1) {
+        errors.push('Year must be between 1900 and next year');
+    }
+    if (!data.cashPrice || data.cashPrice <= 0) errors.push('Cash price must be greater than 0');
+    if (!data.financedPrice || data.financedPrice <= 0) errors.push('Financed price must be greater than 0');
+    if (!data.vinNumber?.trim()) errors.push('VIN number is required');
+    if (!data.mileage || data.mileage < 0) errors.push('Mileage must be 0 or greater');
+    
+    const validFuelTypes = ['gasoline', 'ethanol', 'diesel', 'flex', 'hybrid', 'electric'];
+    if (!data.fuelType || !validFuelTypes.includes(data.fuelType)) {
+        errors.push(`Fuel type must be one of: ${validFuelTypes.join(', ')}`);
+    }
+
+    return errors;
+};
+
 // Multer config for multiple images
 const storage = multer.memoryStorage();
 const upload = multer({
@@ -25,28 +51,46 @@ exports.uploadImage = (req, res, next) => {
     upload(req, res, function (err) {
         if (err instanceof multer.MulterError) {
             if (err.code === 'LIMIT_FILE_SIZE') {
-                return res.status(400).json({ message: 'File size too large. Max size is 5MB per file.' });
+                return res.status(400).json({ 
+                    success: false,
+                    message: 'File size too large. Max size is 5MB per file.' 
+                });
             }
             if (err.code === 'LIMIT_FILE_COUNT') {
-                return res.status(400).json({ message: 'Too many files. Maximum is 5 files.' });
+                return res.status(400).json({ 
+                    success: false,
+                    message: 'Too many files. Maximum is 5 files.' 
+                });
             }
-            return res.status(400).json({ message: err.message });
+            return res.status(400).json({ 
+                success: false,
+                message: err.message 
+            });
         } else if (err) {
-            return res.status(400).json({ message: err.message });
+            return res.status(400).json({ 
+                success: false,
+                message: err.message 
+            });
         }
         next();
     });
 };
 
-// ...restante do código do controller...
-
 exports.getAllCars = async (req, res) => {
     try {
         const cars = await Car.find().sort('-createdAt');
-        res.json(cars);
+        return res.json({ 
+            success: true,
+            data: cars,
+            message: 'Cars fetched successfully'
+        });
     } catch (error) {
-        console.error('Error fetching cars:', error);
-        res.status(500).json({ message: 'Error fetching cars' });
+        console.error('[getAllCars] Error:', error);
+        return res.status(500).json({ 
+            success: false,
+            message: 'Error fetching cars',
+            details: error.message
+        });
     }
 };
 
@@ -54,12 +98,24 @@ exports.getCarById = async (req, res) => {
     try {
         const car = await Car.findById(req.params.id);
         if (!car) {
-            return res.status(404).json({ message: 'Car not found' });
+            return res.status(404).json({ 
+                success: false,
+                message: 'Car not found',
+                data: null
+            });
         }
-        res.json(car);
+        return res.json({ 
+            success: true,
+            data: car,
+            message: 'Car fetched successfully'
+        });
     } catch (error) {
-        console.error('Error fetching car:', error);
-        res.status(500).json({ message: 'Error fetching car' });
+        console.error('[getCarById] Error:', error);
+        return res.status(500).json({ 
+            success: false,
+            message: 'Error fetching car',
+            details: error.message
+        });
     }
 };
 
@@ -68,17 +124,23 @@ exports.addCar = async (req, res) => {
         const { brand, model, year, cashPrice, financedPrice, vinNumber, description, mileage, fuelType } = req.body;
 
         // Validate required fields
-        if (!brand || !model || !year || !cashPrice || !financedPrice || !vinNumber || !mileage || !fuelType) {
+        const validationErrors = validateCarData(req.body);
+        if (validationErrors.length > 0) {
             return res.status(400).json({ 
-                message: 'Missing required fields: brand, model, year, cashPrice, financedPrice, vinNumber, mileage, and fuel type are required' 
+                success: false,
+                message: 'Validation error',
+                details: validationErrors,
+                data: null
             });
         }
 
-        // Validate fuel type
-        const validFuelTypes = ['gasoline', 'ethanol', 'diesel', 'flex', 'hybrid', 'electric'];
-        if (!validFuelTypes.includes(fuelType)) {
+        // Check if VIN already exists
+        const existingCar = await Car.findOne({ vinNumber: vinNumber.trim() });
+        if (existingCar) {
             return res.status(400).json({
-                message: `Invalid fuel type. Must be one of: ${validFuelTypes.join(', ')}`
+                success: false,
+                message: 'A car with this VIN number already exists',
+                data: null
             });
         }
 
@@ -90,19 +152,24 @@ exports.addCar = async (req, res) => {
                     imageUrls.push(url);
                 }
             } catch (uploadError) {
-                console.error('Error uploading images:', uploadError);
-                return res.status(500).json({ message: 'Error uploading images' });
+                console.error('[addCar] Error uploading images:', uploadError);
+                return res.status(500).json({ 
+                    success: false,
+                    message: 'Error uploading images',
+                    details: uploadError.message,
+                    data: null
+                });
             }
         }
 
         const car = new Car({
-            brand,
-            model,
+            brand: brand.trim(),
+            model: model.trim(),
             year: parseInt(year),
             cashPrice: parseFloat(cashPrice),
             financedPrice: parseFloat(financedPrice),
             vinNumber: vinNumber.trim(),
-            description: description || '',
+            description: description?.trim() || '',
             mileage: parseInt(mileage),
             fuelType,
             images: imageUrls,
@@ -110,10 +177,19 @@ exports.addCar = async (req, res) => {
         });
 
         const savedCar = await car.save();
-        res.status(201).json(savedCar);
+        return res.status(201).json({ 
+            success: true,
+            data: savedCar,
+            message: 'Car added successfully'
+        });
     } catch (error) {
-        console.error('Error adding car:', error);
-        res.status(400).json({ message: 'Error adding car' });
+        console.error('[addCar] Error:', error);
+        return res.status(500).json({ 
+            success: false,
+            message: 'Error adding car',
+            details: error.message,
+            data: null
+        });
     }
 };
 
@@ -121,10 +197,44 @@ exports.updateCar = async (req, res) => {
     try {
         const car = await Car.findById(req.params.id);
         if (!car) {
-            return res.status(404).json({ message: 'Car not found' });
+            return res.status(404).json({ 
+                success: false,
+                message: 'Car not found',
+                data: null
+            });
         }
 
         const { brand, model, year, cashPrice, financedPrice, vinNumber, description, status, mileage, fuelType } = req.body;
+        
+        // Validate data if provided
+        const validationErrors = validateCarData({
+            ...car.toObject(),
+            ...req.body
+        });
+        if (validationErrors.length > 0) {
+            return res.status(400).json({ 
+                success: false,
+                message: 'Validation error',
+                details: validationErrors,
+                data: null
+            });
+        }
+
+        // Check VIN uniqueness if changed
+        if (vinNumber && vinNumber !== car.vinNumber) {
+            const existingCar = await Car.findOne({ 
+                vinNumber: vinNumber.trim(),
+                _id: { $ne: car._id }
+            });
+            if (existingCar) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'A car with this VIN number already exists',
+                    data: null
+                });
+            }
+        }
+        
         // Recebe as imagens antigas que sobraram (do frontend)
         let oldImages = [];
         if (req.body.oldImages) {
@@ -136,6 +246,7 @@ exports.updateCar = async (req, res) => {
         } else {
             oldImages = car.images || [];
         }
+
         let newImageUrls = [];
         if (req.files && req.files.length > 0) {
             try {
@@ -144,12 +255,19 @@ exports.updateCar = async (req, res) => {
                     newImageUrls.push(url);
                 }
             } catch (uploadError) {
-                console.error('Error uploading new images:', uploadError);
-                return res.status(500).json({ message: 'Error uploading new images' });
+                console.error('[updateCar] Error uploading new images:', uploadError);
+                return res.status(500).json({ 
+                    success: false,
+                    message: 'Error uploading new images',
+                    details: uploadError.message,
+                    data: null
+                });
             }
         }
+
         // Juntar antigas + novas, sem passar de 5
         const allImages = [...oldImages, ...newImageUrls].slice(0, 5);
+
         // Apagar do S3 as imagens removidas
         const removedImages = (car.images || []).filter(img => !oldImages.includes(img));
         if (removedImages.length > 0) {
@@ -157,34 +275,71 @@ exports.updateCar = async (req, res) => {
                 try {
                     await deleteFromS3(imageUrl);
                 } catch (deleteError) {
-                    console.error('Error deleting image from S3:', deleteError);
+                    console.error('[updateCar] Error deleting image from S3:', deleteError);
+                    // Não retornamos erro aqui para não impedir a atualização do carro
                 }
             }
         }
+
         // Update car fields
         const updates = {
-            brand: brand || car.brand,
-            model: model || car.model,
+            brand: brand ? brand.trim() : car.brand,
+            model: model ? model.trim() : car.model,
             year: year ? parseInt(year) : car.year,
             cashPrice: cashPrice ? parseFloat(cashPrice) : car.cashPrice,
             financedPrice: financedPrice ? parseFloat(financedPrice) : car.financedPrice,
             vinNumber: vinNumber ? vinNumber.trim() : car.vinNumber,
-            description: description || car.description,
+            description: description !== undefined ? description.trim() : car.description,
             mileage: mileage ? parseInt(mileage) : car.mileage,
             fuelType: fuelType || car.fuelType,
             images: allImages,
             status: status || car.status,
             updatedAt: new Date()
         };
+
         const updatedCar = await Car.findByIdAndUpdate(
             req.params.id,
             updates,
             { new: true, runValidators: true }
         );
-        res.status(200).json({ success: true, car: updatedCar });
+
+        if (!updatedCar) {
+            return res.status(404).json({ 
+                success: false,
+                message: 'Car not found after update attempt',
+                data: null
+            });
+        }
+
+        return res.status(200).json({ 
+            success: true, 
+            data: updatedCar,
+            message: 'Car updated successfully'
+        });
     } catch (error) {
-        console.error('Error updating car:', error);
-        res.status(400).json({ message: 'Error updating car' });
+        console.error('[updateCar] Error:', error);
+        if (error.name === 'ValidationError') {
+            return res.status(400).json({ 
+                success: false,
+                message: 'Validation error',
+                details: Object.values(error.errors).map(err => err.message),
+                data: null
+            });
+        }
+        if (error.name === 'CastError') {
+            return res.status(400).json({ 
+                success: false,
+                message: 'Invalid data format',
+                details: error.message,
+                data: null
+            });
+        }
+        return res.status(500).json({ 
+            success: false,
+            message: 'Error updating car',
+            details: error.message,
+            data: null
+        });
     }
 };
 
@@ -192,7 +347,11 @@ exports.deleteCar = async (req, res) => {
     try {
         const car = await Car.findById(req.params.id);
         if (!car) {
-            return res.status(404).json({ message: 'Car not found' });
+            return res.status(404).json({ 
+                success: false,
+                message: 'Car not found',
+                data: null
+            });
         }
 
         // Remove images from S3
@@ -202,16 +361,30 @@ exports.deleteCar = async (req, res) => {
                     await deleteFromS3(imageUrl);
                 }
             } catch (deleteError) {
-                console.error('Error deleting images:', deleteError);
-                return res.status(500).json({ message: 'Error deleting images' });
+                console.error('[deleteCar] Error deleting images:', deleteError);
+                return res.status(500).json({ 
+                    success: false,
+                    message: 'Error deleting images',
+                    details: deleteError.message,
+                    data: null
+                });
             }
         }
 
         await Car.findByIdAndDelete(req.params.id);
-        res.status(204).send();
+        return res.status(200).json({ 
+            success: true,
+            message: 'Car deleted successfully',
+            data: null
+        });
     } catch (error) {
-        console.error('Error deleting car:', error);
-        res.status(500).json({ message: 'Error deleting car' });
+        console.error('[deleteCar] Error:', error);
+        return res.status(500).json({ 
+            success: false,
+            message: 'Error deleting car',
+            details: error.message,
+            data: null
+        });
     }
 };
 
@@ -219,29 +392,51 @@ exports.deleteImage = async (req, res) => {
     try {
         const car = await Car.findById(req.params.id);
         if (!car) {
-            return res.status(404).json({ message: 'Car not found' });
+            return res.status(404).json({ 
+                success: false,
+                message: 'Car not found',
+                data: null
+            });
         }
 
         const { imageUrl } = req.body;
         if (!imageUrl) {
-            return res.status(400).json({ message: 'Image URL is required' });
+            return res.status(400).json({ 
+                success: false,
+                message: 'Image URL is required',
+                data: null
+            });
         }
 
         // Remove image from S3
         try {
             await deleteFromS3(imageUrl);
         } catch (deleteError) {
-            console.error('Error deleting image from S3:', deleteError);
-            return res.status(500).json({ message: 'Error deleting image from storage' });
+            console.error('[deleteImage] Error deleting image from S3:', deleteError);
+            return res.status(500).json({ 
+                success: false,
+                message: 'Error deleting image from storage',
+                details: deleteError.message,
+                data: null
+            });
         }
 
         // Remove image URL from car's images array
         car.images = car.images.filter(img => img !== imageUrl);
         await car.save();
 
-        res.status(200).json({ message: 'Image deleted successfully' });
+        return res.status(200).json({ 
+            success: true,
+            message: 'Image deleted successfully',
+            data: null
+        });
     } catch (error) {
-        console.error('Error deleting image:', error);
-        res.status(500).json({ message: 'Error deleting image' });
+        console.error('[deleteImage] Error:', error);
+        return res.status(500).json({ 
+            success: false,
+            message: 'Error deleting image',
+            details: error.message,
+            data: null
+        });
     }
 };
