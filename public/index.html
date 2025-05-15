@@ -38,10 +38,12 @@
       .header-menu { display: none; }
       .header-mobile { display: flex !important; }
       header img { height: 85px !important; max-height: 85px !important; }
+      .mobile-logo { height: 110px !important; max-height: 110px !important; }
       .header-mobile i.fas.fa-phone { font-size: 1.1rem !important; }
-      .header-mobile + a.bg-brand-green, .header-mobile + a { font-size: 0.95rem !important; padding: 0.7rem 1.3rem !important; }
+      .header-mobile + a.bg-brand-green, .header-mobile + a { font-size: 0.85rem !important; padding: 0.5rem 1rem !important; }
       .mobile-menu { background: #fff !important; }
-      .mobile-menu a { color: #0a2713 !important; }
+      .mobile-menu a { color: #0a2713 !important; font-size: 1rem !important; }
+      .flex.items-center.space-x-4 > a, .flex.items-center.space-x-4 > button { font-size: 0.85rem !important; padding: 0.5rem 1rem !important; }
     }
     #carModal .close-modal-btn {
       position: fixed;
@@ -75,7 +77,7 @@
   <header class="shadow-lg bg-brand-dark relative">
     <nav class="container mx-auto px-4 py-3 flex items-center justify-between">
       <div class="flex items-center space-x-2">
-        <img src="https://page1.genspark.site/v1/base64_upload/d31efdedb1232115fd6ffa6c27cb9e5b" alt="Logo" class="h-24 md:h-24 sm:h-20">
+        <img src="https://page1.genspark.site/v1/base64_upload/d31efdedb1232115fd6ffa6c27cb9e5b" alt="Logo" class="h-24 md:h-24 sm:h-20 mobile-logo">
       </div>
       <div class="hidden md:flex space-x-10 header-menu justify-end flex-1 mr-12">
         <a href="#inventory" class="nav-link text-white font-medium hover:text-primary-green transition-colors">Inventory</a>
@@ -358,9 +360,7 @@
       <img src="https://page1.genspark.site/v1/base64_upload/d31efdedb1232115fd6ffa6c27cb9e5b" alt="Logo" class="h-20 md:h-20 sm:h-16 mx-auto mb-4">
       <p class="text-gray-400 mb-4">Quality used vehicles with accessible financing options for the immigrant community.</p>
       <div class="flex justify-center space-x-4">
-        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-facebook"></i></a>
-        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-instagram"></i></a>
-        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-whatsapp"></i></a>
+        <!-- Ícones de redes sociais removidos -->
       </div>
       <hr class="border-gray-800 my-8">
       <p class="text-gray-400">&copy; 2025 Brazilian Auto Group. All rights reserved.</p>
