@@ -392,7 +392,8 @@ async function loadCars() {
   try {
     const response = await fetch(REMOTE_API_URL);
     if (!response.ok) throw new Error('API não respondeu');
-    const cars = await response.json();
+    const result = await response.json();
+    const cars = result.data || [];
 
     // Featured (primeiros 3 disponíveis)
     const featured = cars.filter(c => c.status === 'available').slice(0, 3);
