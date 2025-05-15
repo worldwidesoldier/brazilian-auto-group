@@ -8,7 +8,7 @@ const connectDB = require('./config/database');
 require('dotenv').config();
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 10000;
 
 // Conectar ao MongoDB
 connectDB();
@@ -63,6 +63,6 @@ app.use((err, req, res, next) => {
 });
 
 // Iniciar servidor
-app.listen(port, () => {
-    console.log(`Servidor rodando em http://localhost:${port}`);
+app.listen(port, '0.0.0.0', () => {
+    console.log(`Servidor rodando em http://0.0.0.0:${port}`);
 });
