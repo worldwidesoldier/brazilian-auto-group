@@ -24,7 +24,7 @@
             <!-- Add Car Form -->
             <div class="bg-white shadow rounded-lg p-6 mb-6">
                 <h2 class="text-xl font-semibold mb-4">Add New Car</h2>
-                <form id="addCarForm" class="space-y-4">
+                <form id="addCarForm" class="space-y-4" style="position:relative;">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Brand</label>
@@ -141,20 +141,25 @@
                             }
                             /* Mobile: garantir que FilePond não ocupe toda a largura */
                             @media (max-width: 600px) {
+                                .mobile-sticky-btn {
+                                    position: fixed;
+                                    left: 0;
+                                    right: 0;
+                                    bottom: 0;
+                                    background: #fff;
+                                    z-index: 100;
+                                    padding: 12px 16px 16px 16px;
+                                    box-shadow: 0 -2px 8px rgba(0,0,0,0.08);
+                                }
+                                form#addCarForm {
+                                    padding-bottom: 80px !important;
+                                }
                                 .filepond--root {
                                     max-width: 98vw;
                                     min-width: 120px;
                                 }
                                 .filepond--item, .filepond--file {
                                     max-width: 90vw;
-                                }
-                                #editModal .flex.justify-end {
-                                    position: fixed;
-                                    left: 0;
-                                    right: 0;
-                                    bottom: 0;
-                                    width: 100vw;
-                                    box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
                                 }
                             }
                         </style>
@@ -623,14 +628,6 @@
                     styleProgressIndicatorPosition: 'right',
                     styleButtonProcessItemPosition: 'right',
                     stylePanelLayout: 'compact',
-                });
-            }
-
-            // Garantir submit no mobile mesmo se o botão for "desanexado" do form
-            if (window.innerWidth < 700) {
-                document.querySelector('.mobile-sticky-btn button[type="submit"]').addEventListener('click', function(e) {
-                    e.preventDefault();
-                    document.getElementById('addCarForm').requestSubmit();
                 });
             }
         });
