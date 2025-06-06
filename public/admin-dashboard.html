@@ -9,6 +9,11 @@
     <!-- Adicionar FilePond CSS -->
     <link href="https://unpkg.com/filepond@^4/dist/filepond.css" rel="stylesheet">
     <link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet">
+    <style>
+      .modal-open #addCarBtn {
+        display: none !important;
+      }
+    </style>
 </head>
 <body class="bg-gray-100">
     <div class="min-h-screen">
@@ -414,10 +419,7 @@
             currentCarId = carId;
             const modal = document.getElementById('editModal');
             modal.classList.remove('hidden');
-            // Esconde o botão Add Car
-            const addCarBtn = document.getElementById('addCarBtn');
-            if (addCarBtn) addCarBtn.style.display = 'none';
-
+            document.body.classList.add('modal-open');
             // Limpar imagens do FilePond de edição
             if (editPond) editPond.removeFiles();
 
@@ -471,9 +473,7 @@
             modal.classList.add('hidden');
             currentCarId = null;
             document.getElementById('editImagePreview').innerHTML = '';
-            // Mostra o botão Add Car
-            const addCarBtn = document.getElementById('addCarBtn');
-            if (addCarBtn) addCarBtn.style.display = '';
+            document.body.classList.remove('modal-open');
         }
 
         // Remove existing image
