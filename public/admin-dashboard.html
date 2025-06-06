@@ -159,8 +159,8 @@
                             }
                         </style>
                     </div>
-                    <div>
-                        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                    <div class="mobile-sticky-btn">
+                        <button type="submit" class="bg-blue-600 text-white px-4 py-3 text-lg rounded-md w-full md:w-auto hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-lg">
                             Add Car
                         </button>
                     </div>
@@ -385,6 +385,11 @@
                     loadCars();
                     showNotification(result.message || 'Car added successfully!');
                 } else {
+                    if (result.details && Array.isArray(result.details)) {
+                        showNotification(result.details.join('\n'), 'error');
+                    } else {
+                        showNotification(result.message || 'Error adding car', 'error');
+                    }
                     throw new Error(result.message || 'Error adding car');
                 }
             } catch (error) {
@@ -618,6 +623,14 @@
                     styleProgressIndicatorPosition: 'right',
                     styleButtonProcessItemPosition: 'right',
                     stylePanelLayout: 'compact',
+                });
+            }
+
+            // Garantir submit no mobile mesmo se o botão for "desanexado" do form
+            if (window.innerWidth < 700) {
+                document.querySelector('.mobile-sticky-btn button[type="submit"]').addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.getElementById('addCarForm').requestSubmit();
                 });
             }
         });
