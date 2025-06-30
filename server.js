@@ -5,6 +5,7 @@ const helmet = require('helmet');
 const compression = require('compression');
 const session = require('express-session');
 const connectDB = require('./config/database');
+const auctionHousesApi = require('./routes/auction-houses');
 require('dotenv').config();
 
 const app = express();
@@ -34,6 +35,12 @@ app.use(express.static(path.resolve(__dirname, 'public')));
 // Rotas da API
 app.use('/api/cars', require('./routes/cars'));
 app.use('/api/admin', require('./routes/admin'));
+
+// Rota isolada para API do auction-houses
+app.use('/auction-houses/api', auctionHousesApi);
+
+// Servir frontend isolado do auction-houses
+app.use('/auction-houses', express.static(path.join(__dirname, 'auction-houses/public')));
 
 // Rotas do frontend
 app.get('/', (req, res) => {
