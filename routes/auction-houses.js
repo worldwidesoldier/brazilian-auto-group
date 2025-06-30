@@ -5,7 +5,7 @@ const path = require('path');
 const router = express.Router();
 
 const SPREADSHEET_ID = '1WDtW90hJuqeaXBitOmXC0Qrwu_N6dtHYMDlbwZjSGuw';
-const credentials = JSON.parse(fs.readFileSync(path.join(__dirname, '../google-credentials.json')));
+const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS);
 const auth = new google.auth.GoogleAuth({
   credentials,
   scopes: ['https://www.googleapis.com/auth/spreadsheets'],
